@@ -1,18 +1,13 @@
 const pool = require('../db');
 
 const findById = async (id) => {
-  const result = await pool.query(
-    'SELECT * FROM plano_alimentar WHERE id = $1',
-    [id]
-  );
+  const result = await pool.query('SELECT * FROM plano_alimentar WHERE id = $1', [id]);
+  
   return result.rows[0];
 };
 
 const findByPacienteId = async (paciente_id) => {
-  const result = await pool.query(
-    'SELECT * FROM plano_alimentar WHERE paciente_id = $1',
-    [paciente_id]
-  );
+  const result = await pool.query('SELECT * FROM plano_alimentar WHERE paciente_id = $1', [paciente_id]);
   return result.rows;
 };
 
@@ -33,10 +28,7 @@ const update = async (id, { descricao, status }) => {
 };
 
 const remove = async (id) => {
-  await pool.query(
-    'DELETE FROM plano_alimentar WHERE id = $1',
-    [id]
-  );
+  await pool.query('DELETE FROM plano_alimentar WHERE id = $1', [id]);
 };
 
 module.exports = { findById, findByPacienteId, create, update, remove };

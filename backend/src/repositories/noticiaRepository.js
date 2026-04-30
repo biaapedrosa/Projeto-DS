@@ -1,17 +1,12 @@
 const pool = require('../db');
 
 const findAll = async () => {
-  const result = await pool.query(
-    'SELECT * FROM noticia ORDER BY data_publicacao DESC'
-  );
+  const result = await pool.query('SELECT * FROM noticia ORDER BY data_publicacao DESC');
   return result.rows;
 };
 
 const findById = async (id) => {
-  const result = await pool.query(
-    'SELECT * FROM noticia WHERE id = $1',
-    [id]
-  );
+  const result = await pool.query('SELECT * FROM noticia WHERE id = $1', [id]);
   return result.rows[0];
 };
 
