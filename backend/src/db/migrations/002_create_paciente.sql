@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS paciente (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  senha VARCHAR(255) NOT NULL,
+  dados_pessoais JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);

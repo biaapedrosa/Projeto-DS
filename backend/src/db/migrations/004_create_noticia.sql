@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS noticia (
+  id SERIAL PRIMARY KEY,
+  titulo VARCHAR(255) NOT NULL,
+  conteudo TEXT NOT NULL,
+  data_publicacao TIMESTAMP DEFAULT NOW()
+);
