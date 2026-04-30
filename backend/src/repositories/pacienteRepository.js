@@ -1,10 +1,7 @@
 const pool = require('../db');
 
 const findByEmail = async (email) => {
-  const result = await pool.query(
-    'SELECT * FROM paciente WHERE email = $1',
-    [email]
-  );
+  const result = await pool.query('SELECT * FROM paciente WHERE email = $1', [email]);
   return result.rows[0];
 };
 
@@ -17,10 +14,7 @@ const create = async ({ nome, email, senha, dados_pessoais }) => {
 };
 
 const findById = async (id) => {
-  const result = await pool.query(
-    'SELECT * FROM paciente WHERE id = $1',
-    [id]
-  );
+  const result = await pool.query('SELECT * FROM paciente WHERE id = $1', [id]);
   return result.rows[0];
 };
 

@@ -2,7 +2,6 @@ const pool = require('../db');
 
 const findById = async (id) => {
   const result = await pool.query('SELECT * FROM plano_alimentar WHERE id = $1', [id]);
-  
   return result.rows[0];
 };
 
