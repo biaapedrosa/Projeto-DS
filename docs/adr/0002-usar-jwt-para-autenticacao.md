@@ -4,28 +4,28 @@ date: 2025-04-28
 deciders: Grupo 6
 ---
 
-# ADR-003: Separar frontend e backend em projetos distintos
+# ADR-002: Usar JWT para autenticação
 
 ## Contexto e Problema
 
-Precisamos definir como organizar o código do sistema. A equipe tem 8 pessoas e vamos trabalhar em paralelo no frontend e no backend durante as sprints. Temos que decidir se o frontend fica junto com o backend (server-side rendering) ou se separamos em dois projetos independentes que se comunicam por API.
+O sistema tem dois tipos de usuário (paciente e nutricionista) com permissões diferentes. Precisamos de um mecanismo de autenticação que funcione bem com a separação frontend/backend que temos, já que o frontend é uma SPA em React que consome a API REST do backend.
 
 ## Opções Consideradas
 
-1. Frontend e backend separados (React SPA + API REST em Express)
-2. Server-side rendering com EJS/Handlebars no Express
-3. Next.js (fullstack com SSR)
+1. JWT (JSON Web Token)
+2. Sessões com cookies (express-session)
+3. OAuth com provedor externo (Google, etc.)
 
 ## Decisão
 
-Vamos **separar frontend e backend em dois projetos** dentro do mesmo repositório (`/frontend` e `/backend`), com o React consumindo a API REST do Express.
+Vamos usar **JWT**.
 
-Essa separação permite que a equipe de front trabalhe nos componentes e telas sem depender do pessoal do back, e vice-versa. A comunicação entre os dois é feita via API REST com JSON. Usar SSR com templates (EJS) ia misturar responsabilidades e dificultar a divisão de trabalho. Next.js seria uma boa alternativa, mas a equipe tem mais familiaridade com React puro + Express, e não precisamos de SSR por enquanto.
+Como o frontend e o backend são separados (React rodando na porta 3000 e Express na 3001), usar sessões tradicionais com cookies ia complicar por causa do CORS e da necessidade de manter estado no servidor. O JWT resolve isso porque é stateless — o token vai no header da requisição e o backend só precisa validar a assinatura. OAuth seria interessante mas é complexo demais pro escopo da Sprint 1, e por enquanto não temos necessidade de login social.
 
 ## Consequências
 
-* Bom: permite desenvolvimento em paralelo — front e back podem evoluir independente
-* Bom: contrato claro entre as camadas (API REST documentada)
-* Bom: a equipe já tem experiência com React e Express separados
-* Ruim: precisa lidar com CORS entre as portas 3000 e 3001 durante o desenvolvimento
-* Ruim: dois `npm install` e dois processos rodando pra desenvolver localmente
+* Bom: funciona naturalmente com API REST e frontend SPA separado
+* Bom: stateless, não precisa guardar sessão no servidor
+* Bom: conseguimos colocar o papel do usuário (paciente/nutricionista) dentro do payload do token
+* Ruim: invalidar um token antes de expirar não é trivial (ex: logout forçado)
+* Ruim: se o token vazar, não tem como revogar sem implementar uma blacklist
