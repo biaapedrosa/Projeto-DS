@@ -25,5 +25,13 @@ const update = async (id, { nome, email, dados_pessoais }) => {
   );
   return result.rows[0];
 };
+const findAll = async () => {
+  const result = await pool.query('SELECT * FROM paciente ORDER BY id');
+  return result.rows;
+};
 
-module.exports = { findByEmail, create, findById, update };
+const remove = async (id) => {
+  await pool.query('DELETE FROM paciente WHERE id = $1', [id]);
+};
+
+module.exports = { findByEmail, create, findById, update, findAll, remove };
