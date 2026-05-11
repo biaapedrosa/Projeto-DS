@@ -16,5 +16,12 @@ const update = async (id, dados) => {
 const getPlanos = async (id) => {
   return await planoRepository.findByPacienteId(id);
 };
-
-module.exports = { getById, update, getPlanos };
+const getAll = async () => {
+  return await pacienteRepository.findAll();
+}
+const remove = async (id) => {
+  const paciente = await pacienteRepository.findById(id);
+  if (!paciente) throw new Error('Paciente não encontrado!');
+  await pacienteRepository.remove(id);
+}
+module.exports = { getById, update, getPlanos, getAll, remove };

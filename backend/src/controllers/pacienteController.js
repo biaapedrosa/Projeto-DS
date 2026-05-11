@@ -26,5 +26,21 @@ const getPlanos = async (req, res) => {
     res.status(404).json({ error: err.message });
   }
 };
+const getAll = async (req, res) => {
+  try {
+    const pacientes = await pacienteService.getAll();
+    res.status(200).json(pacientes);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+}
+const remove = async (req, res) => {
+  try {
+    await pacienteService.remove(req.params.id);
+    res.status(204).send();
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+}
 
-module.exports = { getById, update, getPlanos };
+module.exports = { getById, update, getPlanos, getAll, remove };
