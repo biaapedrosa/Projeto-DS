@@ -1,0 +1,32 @@
+.searchbar-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchbar-container:focus-within {
+  border-color: #4CAF7D;
+  box-shadow: 0 0 0 3px rgba(76, 175, 125, 0.15);
+}
+
+.searchbar-icon {
+  flex-shrink: 0;
+}
+
+.searchbar-input {
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  color: #1a3a2a;
+  background: transparent;
+  width: 100%;
+}
+
+.searchbar-input::placeholder {
+  color: #9ca3af;
+}

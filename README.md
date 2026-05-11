@@ -7,7 +7,7 @@
 | Beatriz Pedrosa | Gerente |
 | Eduardo Neves | Product Owner |
 | Beatriz Pandolfi | Desenvolvedor |
-| João Luiz Siqueira | Desenvolvedor |
+| João Luís  de Siqueira | Desenvolvedor |
 | João Antônio Lins | Desenvolvedor |
 | Marina Cabral | Desenvolvedor |
 | Luísa Lócio | Desenvolvedor |
