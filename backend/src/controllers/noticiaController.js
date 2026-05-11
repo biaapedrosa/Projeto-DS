@@ -35,5 +35,13 @@ const update = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+const remove = async (req, res) => {
+  try {
+    await noticiaService.remove(req.params.id);
+    res.status(204).send();
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+}
 
-module.exports = { getAll, getById, create, update };
+module.exports = { getAll, getById, create, update, remove };
