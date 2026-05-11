@@ -7,5 +7,6 @@ router.get('/', noticiaController.getAll);
 router.get('/:id', noticiaController.getById);
 router.post('/', auth, noticiaController.create);
 router.put('/:id', auth, noticiaController.update);
+router.delete('/:id', auth, noticiaController.remove);
 
 module.exports = router;

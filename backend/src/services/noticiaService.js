@@ -15,5 +15,10 @@ const update = async (id, dados) => {
   if (!noticia) throw new Error('Notícia não encontrada!');
   return noticia;
 };
+const remove = async (id) => {
+  const noticia = await noticiaRepository.findById(id);
+  if (!noticia) throw new Error('Notícia não encontrada!');
+  await noticiaRepository.remove(id);
+}
 
-module.exports = { getAll, getById, create, update };
+module.exports = { getAll, getById, create, update, remove };

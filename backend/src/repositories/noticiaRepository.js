@@ -25,5 +25,8 @@ const update = async (id, { titulo, conteudo }) => {
   );
   return result.rows[0];
 };
+const remove = async (id) => {
+  await pool.query('DELETE FROM noticia WHERE id = $1', [id]);
+};
 
-module.exports = { findAll, findById, create, update };
+module.exports = { findAll, findById, create, update, remove };
