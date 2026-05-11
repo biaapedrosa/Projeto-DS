@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS paciente (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  senha VARCHAR(255) NOT NULL,
+  dados_pessoais JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS nutricionista (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  senha VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS plano_alimentar (
+  id SERIAL PRIMARY KEY,
+  paciente_id INTEGER REFERENCES paciente(id) ON DELETE CASCADE,
+  nutricionista_id INTEGER REFERENCES nutricionista(id) ON DELETE SET NULL,
+  descricao TEXT,
+  status VARCHAR(50) DEFAULT 'ativo',
+  created_at TIMESTAMP DEFAULT NOW()
+);
