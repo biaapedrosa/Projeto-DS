@@ -39,7 +39,7 @@ datasource db {
 
     @@map ("nutricionista")
   }
-  model MealPlan {
+  model MealPlan { 
     id              Int      @id @default(autoincrement())
     patientId       Int      @map("patient_id")
     nutritionistId  Int      @map("nutritionist_id")
@@ -53,4 +53,3 @@ datasource db {
   }
 
 
-  
