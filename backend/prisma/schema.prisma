@@ -25,7 +25,32 @@ datasource db {
 
     Plans MealPlan[] 
     @@map ("paciente")
-  } 
-  model MealPlan {
-    ...
   }
+
+  model Nutritionist {
+    id               Int      @id @default(autoincrement())
+    name             String   @db.VarChar(100)
+    cpf              String   @unique @db.VarChar(11)
+    email            String   @unique @db.VarChar(255)
+    phone            String   @unique
+    crn              String?  @unique @db.VarChar(12)
+
+    Plans MealPlan[]
+
+    @@map ("nutricionista")
+  }
+  model MealPlan {
+    id              Int      @id @default(autoincrement())
+    patientId       Int      @map("patient_id")
+    nutritionistId  Int      @map("nutritionist_id")
+    date            DateTime
+    meals           String[]
+
+    patient       Patient       @relation(fields: [patientId], references: [id])
+    nutritionist  Nutritionist  @relation(fields: [nutritionistId], references: [id])
+
+    @@map ("plano_refeicao")
+  }
+
+
+  
