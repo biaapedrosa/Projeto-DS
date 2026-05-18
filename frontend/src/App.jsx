@@ -7,6 +7,7 @@ import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Noticias from './pages/Noticias/Noticias';
 import Institucional from './pages/Institucional/Institucional';
+import Home from './pages/Home/Home';
 import Historico from './pages/Historico/Historico';
 import './index.css';
 
@@ -32,7 +33,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
 
           {/* Demais páginas com layout completo */}
-          <Route path="/" element={<Layout><Institucional /></Layout>} />
+          <Route path="/" element={<Layout><Home /></Layout>} />
           <Route path="/institucional" element={<Layout><Institucional /></Layout>} />
           <Route path="/noticias" element={<Layout><Noticias /></Layout>} />
           <Route path="/historico" element={<Layout><Historico /></Layout>} />
