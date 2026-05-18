@@ -13,7 +13,6 @@ const { mockLogin, mockNavigate } = vi.hoisted(() => {
 // fiz o mock do useNavigate, porque no teste eu não quero navegar de verdade
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
-
   return {
     ...actual,
     useNavigate: () => mockNavigate
@@ -28,6 +27,13 @@ vi.mock('../context/AuthContext', () => {
     })
   }
 })
+
+// fiz o mock da API para simular chamadas ao backend sem depender do servidor real
+vi.mock('../services/api', () => ({
+  default: {
+    post: vi.fn()
+  }
+}))
 
 describe('Login', () => {
   beforeEach(() => {
@@ -78,5 +84,45 @@ describe('Login', () => {
 
     // nessa parte é feito o teste para verificar se a mensagem de erro aparece
     expect(await screen.findByText(/Email ou senha/i)).toBeInTheDocument()
+  })
+
+  it('abre o modal de cadastro após cadastro bem-sucedido', async () => {
+    // importo o mock da api para configurar o retorno de sucesso
+    const api = (await import('../services/api')).default
+    api.post.mockResolvedValueOnce({ data: {} })
+
+    // preparei a simulação do usuário
+    const user = userEvent.setup()
+
+    // fiz a renderização da tela de login
+    render(<Login />)
+
+    // troco para o modo cadastro clicando no link
+    await user.click(screen.getByText('Cadastre-se'))
+
+    // simulei o usuário preenchendo os campos do cadastro
+    await user.type(screen.getByPlaceholderText('Seu nome completo'), 'João Teste')
+    await user.type(screen.getByPlaceholderText('seu@email.com'), 'joao@teste.com')
+    await user.type(screen.getByPlaceholderText('••••••••'), '123456')
+
+    // simulei o usuário clicando no botão de cadastrar
+    await user.click(screen.getByRole('button', { name: 'Cadastrar' }))
+
+    // verifico se o modal aparece com a mensagem de sucesso
+    expect(await screen.findByText('Cadastro realizado!')).toBeInTheDocument()
+  })
+
+  it('não submete o formulário de login com campos vazios', async () => {
+    // preparei a simulação do usuário
+    const user = userEvent.setup()
+
+    // fiz a renderização da tela de login
+    render(<Login />)
+
+    // simulei o usuário clicando em entrar sem preencher nada
+    await user.click(screen.getByRole('button', { name: 'Entrar' }))
+
+    // o login não deve ter sido chamado pois os campos estão vazios
+    expect(mockLogin).not.toHaveBeenCalled()
   })
 })
