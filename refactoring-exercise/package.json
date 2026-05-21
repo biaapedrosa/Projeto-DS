@@ -1,0 +1,12 @@
+{
+  "name": "refactoring-exercise",
+  "version": "1.0.0",
+  "description": "Exercício de refactoring progressivo — Refactoring JavaScript (Evan Burchard)",
+  "scripts": {
+    "test": "jest --verbose",
+    "test:step": "jest --verbose --testPathPattern"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

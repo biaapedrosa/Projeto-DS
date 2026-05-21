@@ -1,46 +1,34 @@
+// Refactoring Etapas 1, 2 e 3 aplicadas ao projeto real:
+// - Extract Constant (httpStatus)
+// - asyncHandler (elimina try/catch duplicado)
+// - NotFoundError propagado pelo service (statusCode correto automático)
 const pacienteService = require('../services/pacienteService');
+const asyncHandler = require('../middlewares/asyncHandler');
+const HTTP = require('../constants/httpStatus');
 
-const getById = async (req, res) => {
-  try {
-    const paciente = await pacienteService.getById(req.params.id);
-    res.status(200).json(paciente);
-  } catch (err) {
-    res.status(404).json({ error: err.message });
-  }
-};
+const getAll = asyncHandler(async (req, res) => {
+  const pacientes = await pacienteService.getAll();
+  res.status(HTTP.OK).json(pacientes);
+});
 
-const update = async (req, res) => {
-  try {
-    const paciente = await pacienteService.update(req.params.id, req.body);
-    res.status(200).json(paciente);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+const getById = asyncHandler(async (req, res) => {
+  const paciente = await pacienteService.getById(req.params.id);
+  res.status(HTTP.OK).json(paciente);
+});
 
-const getPlanos = async (req, res) => {
-  try {
-    const planos = await pacienteService.getPlanos(req.params.id);
-    res.status(200).json(planos);
-  } catch (err) {
-    res.status(404).json({ error: err.message });
-  }
-};
-const getAll = async (req, res) => {
-  try {
-    const pacientes = await pacienteService.getAll();
-    res.status(200).json(pacientes);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-}
-const remove = async (req, res) => {
-  try {
-    await pacienteService.remove(req.params.id);
-    res.status(204).send();
-  } catch (err) {
-    res.status(404).json({ error: err.message });
-  }
-}
+const update = asyncHandler(async (req, res) => {
+  const paciente = await pacienteService.update(req.params.id, req.body);
+  res.status(HTTP.OK).json(paciente);
+});
 
-module.exports = { getById, update, getPlanos, getAll, remove };
+const getPlanos = asyncHandler(async (req, res) => {
+  const planos = await pacienteService.getPlanos(req.params.id);
+  res.status(HTTP.OK).json(planos);
+});
+
+const remove = asyncHandler(async (req, res) => {
+  await pacienteService.remove(req.params.id);
+  res.status(HTTP.NO_CONTENT).send();
+});
+
+module.exports = { getAll, getById, update, getPlanos, remove };

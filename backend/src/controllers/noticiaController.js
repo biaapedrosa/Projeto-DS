@@ -1,47 +1,34 @@
+// Refactoring Etapas 1, 2 e 3 aplicadas ao projeto real:
+// - Extract Constant (httpStatus)
+// - asyncHandler (elimina try/catch duplicado)
+// - NotFoundError propagado pelo service (statusCode correto automático)
 const noticiaService = require('../services/noticiaService');
+const asyncHandler = require('../middlewares/asyncHandler');
+const HTTP = require('../constants/httpStatus');
 
-const getAll = async (req, res) => {
-  try {
-    const noticias = await noticiaService.getAll();
-    res.status(200).json(noticias);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+const getAll = asyncHandler(async (req, res) => {
+  const noticias = await noticiaService.getAll();
+  res.status(HTTP.OK).json(noticias);
+});
 
-const getById = async (req, res) => {
-  try {
-    const noticia = await noticiaService.getById(req.params.id);
-    res.status(200).json(noticia);
-  } catch (err) {
-    res.status(404).json({ error: err.message });
-  }
-};
+const getById = asyncHandler(async (req, res) => {
+  const noticia = await noticiaService.getById(req.params.id);
+  res.status(HTTP.OK).json(noticia);
+});
 
-const create = async (req, res) => {
-  try {
-    const noticia = await noticiaService.create(req.body);
-    res.status(201).json(noticia);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+const create = asyncHandler(async (req, res) => {
+  const noticia = await noticiaService.create(req.body);
+  res.status(HTTP.CREATED).json(noticia);
+});
 
-const update = async (req, res) => {
-  try {
-    const noticia = await noticiaService.update(req.params.id, req.body);
-    res.status(200).json(noticia);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-const remove = async (req, res) => {
-  try {
-    await noticiaService.remove(req.params.id);
-    res.status(204).send();
-  } catch (err) {
-    res.status(404).json({ error: err.message });
-  }
-}
+const update = asyncHandler(async (req, res) => {
+  const noticia = await noticiaService.update(req.params.id, req.body);
+  res.status(HTTP.OK).json(noticia);
+});
+
+const remove = asyncHandler(async (req, res) => {
+  await noticiaService.remove(req.params.id);
+  res.status(HTTP.NO_CONTENT).send();
+});
 
 module.exports = { getAll, getById, create, update, remove };
