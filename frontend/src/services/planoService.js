@@ -10,4 +10,9 @@ const getByPaciente = async (pacienteId) => {
   return response.data;
 };
 
-export default { getById, getByPaciente };
+const create = async (dados) => {
+  const response = await api.post('/api/planos', dados);
+  return response.data;
+};
+
+export default { getById, getByPaciente, create };

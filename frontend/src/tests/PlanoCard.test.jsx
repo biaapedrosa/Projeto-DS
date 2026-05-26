@@ -8,7 +8,7 @@ describe('PlanoCard', () => {
     status: 'ativo',
     descricao: 'Plano alimentar para paciente em acompanhamento',
     data_criacao: '2026-05-07T12:00:00'
-}
+  }
 
   it('mostra o numero do plano', () => {
     // renderizei o componente passando o plano como propriedade
@@ -40,5 +40,13 @@ describe('PlanoCard', () => {
 
     // verifiquei se a data foi exibida no formato brasileiro
     expect(screen.getByText('07/05/2026')).toBeInTheDocument()
+  })
+
+  it('renderiza como plano anterior quando tipo é passado como historico', () => {
+    // renderizei o componente com tipo diferente do padrão para testar o modo histórico
+    render(<PlanoCard plano={plano} tipo="historico" />)
+
+    // verifiquei se o badge de plano anterior aparece corretamente
+    expect(screen.getByText('📋 Plano Anterior')).toBeInTheDocument()
   })
 })
