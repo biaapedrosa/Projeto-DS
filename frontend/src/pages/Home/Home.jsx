@@ -34,20 +34,19 @@ export default function Home() {
             </button>
           </div>
         </div>
-
-        {/* Card de destaque */}
-        <div style={{ background: 'white', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', maxWidth: '340px', width: '100%' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-            <div style={{ background: '#e8f5e9', borderRadius: '50%', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🥗</div>
-            <div>
-              <p style={{ margin: 0, fontWeight: '700', color: '#1a1a1a' }}>+500 pacientes</p>
-              <p style={{ margin: 0, color: '#888', fontSize: '13px' }}>confiam no NutriFlow</p>
-            </div>
-          </div>
-          <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '16px' }}>
-            <p style={{ margin: '0 0 8px', fontWeight: '600', color: '#1a1a1a' }}>Plano de Emagrecimento</p>
-            <p style={{ margin: '0 0 12px', color: '#555', fontSize: '14px' }}>Foco em redução calórica gradual com manutenção de macronutrientes.</p>
-            <span style={{ background: '#e8f5e9', color: '#2d6a4f', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: '600' }}>● Ativo</span>
+        {/* Imagem com card flutuando */}
+        <div style={{ position: 'relative', maxWidth: '480px', width: '100%' }}>  
+          {/* Imagem */}
+          <img
+            src="/tela-inicio.jpg"
+            alt="Alimentação saudável"
+            style={{ width: '130%', borderRadius: '40px', objectFit: 'cover', boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
+          />
+          {/* Card flutuante */}
+          <div style={{ position: 'absolute', bottom: '-90px', left: '30%', transform: 'translateX(-50%)', background: 'white', borderRadius: '16px', padding: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.1)', maxWidth: '360px', width: '100%' }}>
+              <p style={{ margin: '0 0 8px', fontWeight: '600', color: '#1a1a1a' }}>Plano de Emagrecimento</p>
+              <p style={{ margin: '0 0 12px', color: '#555', fontSize: '14px' }}>Foco em redução calórica gradual com manutenção de macronutrientes.</p>
+              <span style={{ background: '#e8f5e9', color: '#2d6a4f', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: '600' }}>● Ativo</span>
           </div>
         </div>
       </section>
