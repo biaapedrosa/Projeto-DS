@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import authService from '../../services/authService';
 import './NavBar.css';
+import { Leaf } from 'lucide-react'; // ✅ corrigido
 
 const NavBar = () => {
   const { logout, user, login } = useAuth();
@@ -41,12 +42,7 @@ const NavBar = () => {
 
           {/* Logo */}
           <Link to="/" className="navbar-logo">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2C7 2 3 7 3 12c0 2.5 1 4.8 2.6 6.4C7 19.8 9.4 21 12 21s5-1.2 6.4-2.6C20 16.8 21 14.5 21 12c0-5-4-10-9-10z" fill="#4CAF7D"/>
-              <path d="M12 2c0 0-2 4-2 8s2 8 2 8" stroke="#2d6a4f" strokeWidth="1.5" strokeLinecap="round"/>
-              <path d="M12 8c-3 0-5 1.5-5 4" stroke="#2d6a4f" strokeWidth="1.5" strokeLinecap="round"/>
-              <path d="M12 12c3 0 5-1.5 5-4" stroke="#2d6a4f" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+            <Leaf size={22} color="#4CAF7D" /> {/* ✅ substituído */}
             <span>NutriFlow</span>
           </Link>
 
@@ -92,12 +88,7 @@ const NavBar = () => {
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2C7 2 3 7 3 12c0 2.5 1 4.8 2.6 6.4C7 19.8 9.4 21 12 21s5-1.2 6.4-2.6C20 16.8 21 14.5 21 12c0-5-4-10-9-10z" fill="#4CAF7D"/>
-                  <path d="M12 2c0 0-2 4-2 8s2 8 2 8" stroke="#2d6a4f" strokeWidth="1.5" strokeLinecap="round"/>
-                  <path d="M12 8c-3 0-5 1.5-5 4" stroke="#2d6a4f" strokeWidth="1.5" strokeLinecap="round"/>
-                  <path d="M12 12c3 0 5-1.5 5-4" stroke="#2d6a4f" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <Leaf size={22} color="#4CAF7D" /> {/* ✅ substituído */}
                 <span style={{ fontSize: '20px', fontWeight: '700', color: '#1a1a1a' }}>NutriFlow</span>
               </div>
               <h2 style={{ margin: '0 0 4px', fontSize: '20px', fontWeight: '700', color: '#1a1a1a' }}>Bem-vindo de volta!</h2>
