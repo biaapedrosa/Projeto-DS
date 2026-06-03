@@ -1,0 +1,249 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum Sexo {
+  M
+  F
+}
+
+enum VinculoUFPE {
+  Servidor
+  Estudante
+  Externo
+}
+
+enum FrequenciaBebida {
+  Nunca
+  Uma_vez_mes     @map("1x_mes")
+  Um_dois_mes     @map("1_2x_mes")
+  Tres_quatro_mes @map("3_4x_mes")
+  Diariamente
+}
+
+enum FrequenciaFumo {
+  Nunca
+  Diariamente
+  Raramente
+}
+
+enum HabitoIntestinal {
+  Diario
+  Dias_alternados
+  Mais_2_dias
+}
+
+enum CorUrina {
+  Escura
+  Clara
+  Transparente
+}
+
+// ==================== MODELS ====================
+
+model Nutricionista {
+  id         Int              @id @default(autoincrement())
+  nome       String           @db.VarChar(255)
+  email      String           @unique @db.VarChar(255)
+  senha      String           @db.VarChar(255)
+  created_at DateTime         @default(now())
+  planos     PlanoAlimentar[]
+  consultas  Consulta[]
+
+  @@map("nutricionista")
+}
+
+model Paciente {
+  id                Int          @id @default(autoincrement())
+  nome              String       @db.VarChar(255)
+  email             String?      @unique @db.VarChar(255)
+  senha             String       @db.VarChar(255)
+  sexo              Sexo?
+  data_nascimento   DateTime?    @db.Date
+  idade             Int?
+  telefone_whatsapp String?      @db.VarChar(20)
+  ocupacao          String?      @db.VarChar(255)
+  vinculo_ufpe      VinculoUFPE?
+  objetivo          String?
+  created_at        DateTime     @default(now())
+  planos            PlanoAlimentar[]
+  consultas         Consulta[]
+
+  @@map("paciente")
+}
+
+model Consulta {
+  id                Int                       @id @default(autoincrement())
+  paciente_id       Int
+  nutricionista_id  Int
+  data_consulta     DateTime                  @db.Date
+  objetivo_historia String?
+  created_at        DateTime                  @default(now())
+  paciente          Paciente                  @relation(fields: [paciente_id], references: [id])
+  nutricionista     Nutricionista             @relation(fields: [nutricionista_id], references: [id])
+  antropometria     Antropometria?
+  historia_clinica  HistoriaClinica?
+  estilo_vida       EstiloVida?
+  funcao_intestinal FuncaoIntestinalUrinaria?
+  exames            ExameBioquimico[]
+
+  @@map("consulta")
+}
+
+model Antropometria {
+  id                Int      @id @default(autoincrement())
+  consulta_id       Int      @unique
+  pa                String?  @db.VarChar(20)
+  altura            Float?
+  imc               Float?
+  cb                Float?
+  cc_ca             Float?
+  cpant             Float?
+  cpesc             Float?
+  ph                Float?
+  pp                Float?
+  tempo_perda       String?  @db.VarChar(100)
+  perc_pp           Float?
+  perda_intencional Boolean?
+  dctr              Float?
+  dcse              Float?
+  dcto              Float?
+  dcax              Float?
+  dcabd             Float?
+  dcsi              Float?
+  dccc              Float?
+  outras_medidas    String?
+  exame_fisico      String?
+  classificacao     String?
+  consulta          Consulta @relation(fields: [consulta_id], references: [id])
+
+  @@map("antropometria")
+}
+
+model HistoriaClinica {
+  id                    Int      @id @default(autoincrement())
+  consulta_id           Int      @unique
+  hist_familiar_dm      Boolean  @default(false)
+  hist_familiar_has     Boolean  @default(false)
+  hist_familiar_dvc     Boolean  @default(false)
+  hist_familiar_cancer  Boolean  @default(false)
+  hist_familiar_outras  String?
+  tem_diagnostico       Boolean?
+  diagnosticos          String?
+  consulta              Consulta @relation(fields: [consulta_id], references: [id])
+
+  @@map("historia_clinica")
+}
+
+model EstiloVida {
+  id                Int               @id @default(autoincrement())
+  consulta_id       Int               @unique
+  bebida_alcoolica  FrequenciaBebida?
+  fuma              FrequenciaFumo?
+  atividade_fisica  String?
+  ativ_horario      String?           @db.VarChar(100)
+  ativ_frequencia   String?           @db.VarChar(100)
+  ativ_tempo        String?           @db.VarChar(100)
+  horas_sono        Float?
+  horario_mais_fome String?           @db.VarChar(10)
+  fez_dieta_antes   Boolean?
+  consulta          Consulta          @relation(fields: [consulta_id], references: [id])
+
+  @@map("estilo_vida")
+}
+
+model FuncaoIntestinalUrinaria {
+  id                       Int               @id @default(autoincrement())
+  consulta_id              Int               @unique
+  habito_intestinal        HabitoIntestinal?
+  escala_bristol           Int?
+  agua_dia                 Float?
+  cor_urina                CorUrina?
+  queixa_constipacao       Boolean           @default(false)
+  queixa_dores             Boolean           @default(false)
+  queixa_azia_refluxo      Boolean           @default(false)
+  queixa_flatulencia       Boolean           @default(false)
+  queixa_outras            String?
+  alergia_intolerancia     String?
+  suplementos_medicamentos String?
+  consulta                 Consulta          @relation(fields: [consulta_id], references: [id])
+
+  @@map("funcao_intestinal_urinaria")
+}
+
+model ExameBioquimico {
+  id          Int       @id @default(autoincrement())
+  consulta_id Int
+  data_exame  DateTime? @db.Date
+  hb          Float?
+  ht          Float?
+  vcm         Float?
+  hcm         Float?
+  chcm        Float?
+  rdw         Float?
+  hba1c       Float?
+  tgc         Float?
+  tgo         Float?
+  tgp         Float?
+  ur          Float?
+  cr          Float?
+  ac_ur       Float?
+  vit_d       Float?
+  ct          Float?
+  hdl         Float?
+  ldl         Float?
+  vldl        Float?
+  gj          Float?
+  vit_b12     Float?
+  consulta    Consulta  @relation(fields: [consulta_id], references: [id])
+
+  @@map("exame_bioquimico")
+}
+
+model PlanoAlimentar {
+  id               Int           @id @default(autoincrement())
+  paciente_id      Int
+  nutricionista_id Int
+  descricao        String
+  data_criacao     DateTime      @default(now())
+  status           String        @default("ativo") @db.VarChar(50)
+  paciente         Paciente      @relation(fields: [paciente_id], references: [id])
+  nutricionista    Nutricionista @relation(fields: [nutricionista_id], references: [id])
+
+  @@map("plano_alimentar")
+}
+
+model Noticia {
+  id              Int      @id @default(autoincrement())
+  titulo          String   @db.VarChar(255)
+  conteudo        String
+  data_publicacao DateTime @default(now())
+
+  @@map("noticia")
+}
+
+model Alimento {
+  id             Int      @id @default(autoincrement())
+  descricao      String?  @db.VarChar(500)
+  energia_kcal   Decimal? @db.Decimal(10, 2)
+  energia_kj     Decimal? @db.Decimal(10, 2)
+  proteina_g     Decimal? @db.Decimal(10, 2)
+  lipideos_g     Decimal? @db.Decimal(10, 2)
+  carboidratos_g Decimal? @db.Decimal(10, 2)
+  calcio_mg      Decimal? @db.Decimal(10, 2)
+  ferro_mg       Decimal? @db.Decimal(10, 2)
+  retinol_mcg    Decimal? @db.Decimal(10, 2)
+  vitamina_c_mg  Decimal? @db.Decimal(10, 2)
+  sodio_mg       Decimal? @db.Decimal(10, 2)
+  restricoes     Int      @default(0)
+  created_at     DateTime @default(now())
+
+  @@map("alimento")
+}
