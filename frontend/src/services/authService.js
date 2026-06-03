@@ -12,7 +12,7 @@ const login = async (dados) => {
 
   // Decodifica o payload do JWT para pegar o id do usuário
   const payload = JSON.parse(atob(token.split('.')[1]));
-  return { token, id: payload.id, email: payload.email };
+  return { token, id: payload.id, nome: payload.nome, email: payload.email, tipo: payload.tipo, role: payload.role };
 };
 
 const logout = () => {
