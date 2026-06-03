@@ -49,35 +49,108 @@ enum CorUrina {
 // ==================== MODELS ====================
 
 model Nutricionista {
-  id         Int              @id @default(autoincrement())
-  nome       String           @db.VarChar(255)
-  email      String           @unique @db.VarChar(255)
-  senha      String           @db.VarChar(255)
-  created_at DateTime         @default(now())
-  planos     PlanoAlimentar[]
+  id         Int            @id @default(autoincrement())
+  nome       String         @db.VarChar(100)
+  cpf        String         @unique @db.VarChar(11)
+  email      String         @unique @db.VarChar(255)
+  telefone   String         @unique @db.VarChar(20)
+  crn        String?        @unique @db.VarChar(12)
+  senha      String         @db.VarChar(255)
+  created_at DateTime       @default(now())
+  planos     PlanoRefeicao[]
   consultas  Consulta[]
 
   @@map("nutricionista")
 }
 
 model Paciente {
-  id                Int          @id @default(autoincrement())
-  nome              String       @db.VarChar(255)
-  email             String?      @unique @db.VarChar(255)
-  senha             String       @db.VarChar(255)
+  id                Int             @id @default(autoincrement())
+  nome              String          @db.VarChar(255)
+  email             String?         @unique @db.VarChar(255)
+  senha             String          @db.VarChar(255)
   sexo              Sexo?
-  data_nascimento   DateTime?    @db.Date
+  data_nascimento   DateTime?       @db.Date
   idade             Int?
-  telefone_whatsapp String?      @db.VarChar(20)
-  ocupacao          String?      @db.VarChar(255)
+  telefone_whatsapp String?         @db.VarChar(20)
+  ocupacao          String?         @db.VarChar(255)
   vinculo_ufpe      VinculoUFPE?
   objetivo          String?
-  created_at        DateTime     @default(now())
-  planos            PlanoAlimentar[]
+  created_at        DateTime        @default(now())
+  planos            PlanoRefeicao[]
   consultas         Consulta[]
 
   @@map("paciente")
 }
+
+// ==================== PLANO ALIMENTAR ====================
+
+model PlanoRefeicao {
+  id               Int           @id @default(autoincrement())
+  paciente_id      Int           @map("patient_id")
+  nutricionista_id Int           @map("nutritionist_id")
+  data             DateTime
+  refeicoes        Refeicao[]
+  paciente         Paciente      @relation(fields: [paciente_id], references: [id])
+  nutricionista    Nutricionista @relation(fields: [nutricionista_id], references: [id])
+
+  @@map("plano_refeicao")
+}
+
+model Refeicao {
+  id          Int           @id @default(autoincrement())
+  plano_id    Int           @map("meal_plan_id")
+  nome        String        @db.VarChar(100)
+  descricao   String?       @db.VarChar(255)
+  horario     Int?
+  observacao  String?       @db.VarChar(100)
+  opcoes      Opcao[]
+  plano       PlanoRefeicao @relation(fields: [plano_id], references: [id])
+
+  @@map("refeicao")
+}
+
+model Opcao {
+  id          Int       @id @default(autoincrement())
+  refeicao_id Int       @map("refection_id")
+  nome        String    @db.VarChar(100)
+  observacao  String?   @db.VarChar(255)
+  alimentos   Alimento[]
+  refeicao    Refeicao  @relation(fields: [refeicao_id], references: [id])
+
+  @@map("opcao")
+}
+
+model Alimento {
+  id       Int    @id @default(autoincrement())
+  opcao_id Int    @map("option_id")
+  nome     String @db.VarChar(100)
+  opcao    Opcao  @relation(fields: [opcao_id], references: [id])
+
+  @@map("alimento")
+}
+
+// ==================== TABELA TACO ====================
+
+model AlimentoTaco {
+  id             Int      @id @default(autoincrement())
+  descricao      String?  @db.VarChar(500)
+  energia_kcal   Decimal? @db.Decimal(10, 2)
+  energia_kj     Decimal? @db.Decimal(10, 2)
+  proteina_g     Decimal? @db.Decimal(10, 2)
+  lipideos_g     Decimal? @db.Decimal(10, 2)
+  carboidratos_g Decimal? @db.Decimal(10, 2)
+  calcio_mg      Decimal? @db.Decimal(10, 2)
+  ferro_mg       Decimal? @db.Decimal(10, 2)
+  retinol_mcg    Decimal? @db.Decimal(10, 2)
+  vitamina_c_mg  Decimal? @db.Decimal(10, 2)
+  sodio_mg       Decimal? @db.Decimal(10, 2)
+  restricoes     Int      @default(0)
+  created_at     DateTime @default(now())
+
+  @@map("alimento_taco")
+}
+
+// ==================== CONSULTA CLÍNICA ====================
 
 model Consulta {
   id                Int                       @id @default(autoincrement())
@@ -128,16 +201,16 @@ model Antropometria {
 }
 
 model HistoriaClinica {
-  id                    Int      @id @default(autoincrement())
-  consulta_id           Int      @unique
-  hist_familiar_dm      Boolean  @default(false)
-  hist_familiar_has     Boolean  @default(false)
-  hist_familiar_dvc     Boolean  @default(false)
-  hist_familiar_cancer  Boolean  @default(false)
-  hist_familiar_outras  String?
-  tem_diagnostico       Boolean?
-  diagnosticos          String?
-  consulta              Consulta @relation(fields: [consulta_id], references: [id])
+  id                   Int      @id @default(autoincrement())
+  consulta_id          Int      @unique
+  hist_familiar_dm     Boolean  @default(false)
+  hist_familiar_has    Boolean  @default(false)
+  hist_familiar_dvc    Boolean  @default(false)
+  hist_familiar_cancer Boolean  @default(false)
+  hist_familiar_outras String?
+  tem_diagnostico      Boolean?
+  diagnosticos         String?
+  consulta             Consulta @relation(fields: [consulta_id], references: [id])
 
   @@map("historia_clinica")
 }
@@ -207,18 +280,7 @@ model ExameBioquimico {
   @@map("exame_bioquimico")
 }
 
-model PlanoAlimentar {
-  id               Int           @id @default(autoincrement())
-  paciente_id      Int
-  nutricionista_id Int
-  descricao        String
-  data_criacao     DateTime      @default(now())
-  status           String        @default("ativo") @db.VarChar(50)
-  paciente         Paciente      @relation(fields: [paciente_id], references: [id])
-  nutricionista    Nutricionista @relation(fields: [nutricionista_id], references: [id])
-
-  @@map("plano_alimentar")
-}
+// ==================== NOTÍCIAS ====================
 
 model Noticia {
   id              Int      @id @default(autoincrement())
@@ -227,23 +289,4 @@ model Noticia {
   data_publicacao DateTime @default(now())
 
   @@map("noticia")
-}
-
-model Alimento {
-  id             Int      @id @default(autoincrement())
-  descricao      String?  @db.VarChar(500)
-  energia_kcal   Decimal? @db.Decimal(10, 2)
-  energia_kj     Decimal? @db.Decimal(10, 2)
-  proteina_g     Decimal? @db.Decimal(10, 2)
-  lipideos_g     Decimal? @db.Decimal(10, 2)
-  carboidratos_g Decimal? @db.Decimal(10, 2)
-  calcio_mg      Decimal? @db.Decimal(10, 2)
-  ferro_mg       Decimal? @db.Decimal(10, 2)
-  retinol_mcg    Decimal? @db.Decimal(10, 2)
-  vitamina_c_mg  Decimal? @db.Decimal(10, 2)
-  sodio_mg       Decimal? @db.Decimal(10, 2)
-  restricoes     Int      @default(0)
-  created_at     DateTime @default(now())
-
-  @@map("alimento")
 }
