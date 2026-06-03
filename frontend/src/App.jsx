@@ -10,6 +10,7 @@ import Institucional from './pages/Institucional/Institucional';
 import Home from './pages/Home/Home';
 import Historico from './pages/Historico/Historico';
 import './index.css';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 
 // Layout padrão com NavBar e Footer
 function Layout({ children }) {
@@ -36,8 +37,8 @@ export default function App() {
           <Route path="/" element={<Layout><Home /></Layout>} />
           <Route path="/institucional" element={<Layout><Institucional /></Layout>} />
           <Route path="/noticias" element={<Layout><Noticias /></Layout>} />
-          <Route path="/historico" element={<Layout><Historico /></Layout>} />
-          <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+          <Route path="/historico" element={<PrivateRoute><Layout><Historico /></Layout></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
