@@ -11,6 +11,9 @@ import Home from './pages/Home/Home';
 import Historico from './pages/Historico/Historico';
 import './index.css';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import NutricionistaDashboard from './pages/Nutricionista/NutricionistaDashboard';
+import PacienteDashboard from './pages/Paciente/PacienteDashboard';
+import AdminDashboard from './pages/Admin/AdminDashboard';
 
 // Layout padrão com NavBar e Footer
 function Layout({ children }) {
@@ -39,6 +42,9 @@ export default function App() {
           <Route path="/noticias" element={<Layout><Noticias /></Layout>} />
           <Route path="/historico" element={<PrivateRoute><Layout><Historico /></Layout></PrivateRoute>} />
           <Route path="/dashboard" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/dashboard" element={<PrivateRoute><Layout><NutricionistaDashboard /></Layout></PrivateRoute>} />
+          <Route path="/paciente/dashboard" element={<PrivateRoute><Layout><PacienteDashboard /></Layout></PrivateRoute>} />
+          <Route path="/admin/dashboard" element={<PrivateRoute><Layout><AdminDashboard /></Layout></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
