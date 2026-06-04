@@ -1,3 +1,4 @@
+import {useAuth} from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
 import planoService from '../../services/planoService';
 import PlanoCard from '../../components/PlanoCard/PlanoCard';
@@ -10,8 +11,8 @@ const Dashboard = () => {
   const [salvando, setSalvando] = useState(false);
   const [erroModal, setErroModal] = useState('');
 
-  const pacienteId = 2;
-
+  const { user } = useAuth();
+  const pacienteId = user?.id;
   const fetchPlanos = async () => {
     try {
       const data = await planoService.getByPaciente(pacienteId);
