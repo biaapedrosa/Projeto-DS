@@ -25,4 +25,19 @@ const login = async ({ email, senha }) => {
   );
 };
 
-module.exports = { register, login };
+const socialLogin = async ({ nome, email }) => {
+  let paciente = await pacienteRepository.findByEmail(email);
+
+  if (!paciente) {
+    const senhaHash = await bcrypt.hash(Math.random().toString(36), 10);
+    paciente = await pacienteRepository.create({ nome, email, senha: senhaHash });
+  }
+
+  return jwt.sign(
+    { id: paciente.id, email: paciente.email },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
+};
+
+module.exports = { register, login, socialLogin };
