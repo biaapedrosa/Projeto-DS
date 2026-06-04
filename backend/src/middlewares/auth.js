@@ -16,4 +16,16 @@ const auth = (req, res, next) => {
   }
 };
 
+const authorize = (...perfisPermitidos) => (req, res, next) => {
+  if (!req.user) return res.status(401).json({ error: 'Token não fornecido!' });
+
+  const { tipo, role } = req.user;
+  if (perfisPermitidos.includes(tipo) || (role && perfisPermitidos.includes(role))) {
+    return next();
+  }
+
+  return res.status(403).json({ error: 'Acesso não autorizado para este perfil!' });
+};
+
 module.exports = auth;
+module.exports.authorize = authorize;
