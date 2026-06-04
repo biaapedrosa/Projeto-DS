@@ -1,15 +1,13 @@
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
-import authService from '../../services/authService';
 import './NavBar.css';
-import { Leaf } from 'lucide-react'; // ✅ corrigido
+import { Leaf } from 'lucide-react';
 
 const NavBar = () => {
-  const { logout, user, login } = useAuth();
+  const { logout, user, login, showLoginModal, setShowLoginModal } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [modalAberto, setModalAberto] = useState(false);
   const [form, setForm] = useState({ email: '', senha: '' });
   const [erro, setErro] = useState('');
 
@@ -27,7 +25,7 @@ const NavBar = () => {
     setErro('');
     try {
       await login(form);
-      setModalAberto(false);
+      setShowLoginModal(false);
       setForm({ email: '', senha: '' });
       navigate('/dashboard');
     } catch (err) {
@@ -40,18 +38,15 @@ const NavBar = () => {
       <header className="navbar">
         <div className="navbar-container">
 
-          {/* Logo */}
           <Link to="/" className="navbar-logo">
-            <Leaf size={22} color="#4CAF7D" /> {/* ✅ substituído */}
+            <Leaf size={22} color="#4CAF7D" />
             <span>NutriFlow</span>
           </Link>
 
-          {/* Links */}
           <nav className={`navbar-nav ${menuOpen ? 'open' : ''}`}>
             {user ? (
               <>
                 <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-                <Link to="/noticias" onClick={() => setMenuOpen(false)}>Notícias</Link>
                 <Link to="/historico" onClick={() => setMenuOpen(false)}>Histórico</Link>
                 <button className="btn-sair" onClick={handleLogout}>Sair</button>
               </>
@@ -59,15 +54,13 @@ const NavBar = () => {
               <>
                 <Link to="/" onClick={() => setMenuOpen(false)}>Início</Link>
                 <Link to="/institucional" onClick={() => setMenuOpen(false)}>Sobre</Link>
-                <Link to="/noticias" onClick={() => setMenuOpen(false)}>Notícias</Link>
-                <button className="btn-entrar" onClick={() => { setModalAberto(true); setMenuOpen(false); }}>
+                <button className="btn-entrar" onClick={() => { setShowLoginModal(true); setMenuOpen(false); }}>
                   Entrar
                 </button>
               </>
             )}
           </nav>
 
-          {/* Hambúrguer mobile */}
           <button className="navbar-hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
             <span></span>
             <span></span>
@@ -77,18 +70,15 @@ const NavBar = () => {
         </div>
       </header>
 
-      {/* Modal de Login */}
-      {modalAberto && (
+      {showLoginModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: 'white', borderRadius: '16px', padding: '40px', width: '100%', maxWidth: '400px', boxShadow: '0 8px 32px rgba(0,0,0,0.2)', position: 'relative' }}>
 
-            {/* Botão fechar */}
-            <button onClick={() => { setModalAberto(false); setErro(''); }} style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#888' }}>×</button>
+            <button onClick={() => { setShowLoginModal(false); setErro(''); }} style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#888' }}>×</button>
 
-            {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Leaf size={22} color="#4CAF7D" /> {/* ✅ substituído */}
+                <Leaf size={22} color="#4CAF7D" />
                 <span style={{ fontSize: '20px', fontWeight: '700', color: '#1a1a1a' }}>NutriFlow</span>
               </div>
               <h2 style={{ margin: '0 0 4px', fontSize: '20px', fontWeight: '700', color: '#1a1a1a' }}>Bem-vindo de volta!</h2>
@@ -135,7 +125,7 @@ const NavBar = () => {
 
             <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: '#555' }}>
               Não tem conta?{' '}
-              <span onClick={() => { setModalAberto(false); navigate('/login?modo=cadastro'); }} style={{ color: '#2d7a4f', cursor: 'pointer', fontWeight: '600' }}>
+              <span onClick={() => { setShowLoginModal(false); navigate('/login?modo=cadastro'); }} style={{ color: '#2d7a4f', cursor: 'pointer', fontWeight: '600' }}>
                 Cadastre-se
               </span>
             </p>
