@@ -47,7 +47,6 @@ const NavBar = () => {
             {user ? (
               <>
                 <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-                <Link to="/noticias" onClick={() => setMenuOpen(false)}>Notícias</Link>
                 <Link to="/historico" onClick={() => setMenuOpen(false)}>Histórico</Link>
                 <button className="btn-sair" onClick={handleLogout}>Sair</button>
               </>
@@ -55,7 +54,6 @@ const NavBar = () => {
               <>
                 <Link to="/" onClick={() => setMenuOpen(false)}>Início</Link>
                 <Link to="/institucional" onClick={() => setMenuOpen(false)}>Sobre</Link>
-                <Link to="/noticias" onClick={() => setMenuOpen(false)}>Notícias</Link>
                 <button className="btn-entrar" onClick={() => { setShowLoginModal(true); setMenuOpen(false); }}>
                   Entrar
                 </button>
