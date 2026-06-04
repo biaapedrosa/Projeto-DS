@@ -16,9 +16,9 @@ const getById = async (id) => {
 };
 
 const update = async (id, dados) => {
-  const paciente = await pacienteRepository.update(id, dados);
+  const paciente = await pacienteRepository.findById(id);
   if (!paciente) throw new Error('Paciente não encontrado!');
-  return paciente;
+  return pacienteRepository.update(id, dados);
 };
 
 const getPlanos = async (id) => {
