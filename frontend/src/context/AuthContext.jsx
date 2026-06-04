@@ -9,6 +9,8 @@ export const AuthProvider = ({ children }) => {
     return salvo ? JSON.parse(salvo) : null;
   });
 
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   const login = async (dados) => {
     const data = await authService.login(dados);
     setUser(data);
@@ -23,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, showLoginModal, setShowLoginModal }}>
       {children}
     </AuthContext.Provider>
   );
