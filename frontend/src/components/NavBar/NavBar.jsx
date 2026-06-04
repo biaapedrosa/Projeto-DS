@@ -24,13 +24,26 @@ const NavBar = () => {
     e.preventDefault();
     setErro('');
     try {
-      await login(form);
-      setShowLoginModal(false);
+      const data = await login(form);
+      setModalAberto(false);
       setForm({ email: '', senha: '' });
-      navigate('/dashboard');
+      if (data.tipo === 'nutricionista' && data.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (data.tipo === 'nutricionista') {
+        navigate('/nutricionista/dashboard');
+      } else {
+        navigate('/paciente/dashboard');
+      }
     } catch (err) {
       setErro('Email ou senha inválidos!');
     }
+  };
+
+  const painelLink = () => {
+    if (!user) return '/login';
+    if (user.tipo === 'nutricionista' && user.role === 'admin') return '/admin/dashboard';
+    if (user.tipo === 'nutricionista') return '/nutricionista/dashboard';
+    return '/paciente/dashboard';
   };
 
   return (
@@ -46,8 +59,11 @@ const NavBar = () => {
           <nav className={`navbar-nav ${menuOpen ? 'open' : ''}`}>
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-                <Link to="/historico" onClick={() => setMenuOpen(false)}>Histórico</Link>
+                <Link to={painelLink()} onClick={() => setMenuOpen(false)}>Painel</Link>
+                <Link to="/noticias" onClick={() => setMenuOpen(false)}>Notícias</Link>
+                <span style={{ fontSize: '14px', color: '#555', fontWeight: '500' }}>
+                  Olá, {user.nome || user.email}
+                </span>
                 <button className="btn-sair" onClick={handleLogout}>Sair</button>
               </>
             ) : (

@@ -39,8 +39,14 @@ const Login = () => {
     e.preventDefault();
     setErro('');
     try {
-      await login(form);
-      navigate('/dashboard');
+      const data = await login(form);
+      if (data.tipo === 'nutricionista' && data.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (data.tipo === 'nutricionista') {
+        navigate('/nutricionista/dashboard');
+      } else {
+        navigate('/paciente/dashboard');
+      }
     } catch (err) {
       setErro('Email ou senha inválidos!');
     }

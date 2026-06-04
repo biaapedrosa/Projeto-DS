@@ -46,6 +46,11 @@ enum CorUrina {
   Transparente
 }
 
+enum RoleNutricionista {
+  nutricionista
+  admin
+}
+
 // ==================== MODELS ====================
 
 model Nutricionista {
@@ -56,6 +61,7 @@ model Nutricionista {
   telefone   String         @unique @db.VarChar(20)
   crn        String?        @unique @db.VarChar(12)
   senha      String         @db.VarChar(255)
+  role       RoleNutricionista @default(nutricionista)
   created_at DateTime       @default(now())
   planos     PlanoRefeicao[]
   consultas  Consulta[]

@@ -1,5 +1,14 @@
 const pacienteService = require('../services/pacienteService');
 
+const create = async (req, res) => {
+  try {
+    const paciente = await pacienteService.create(req.body);
+    res.status(201).json(paciente);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 const getById = async (req, res) => {
   try {
     const paciente = await pacienteService.getById(req.params.id);
@@ -43,4 +52,4 @@ const remove = async (req, res) => {
   }
 }
 
-module.exports = { getById, update, getPlanos, getAll, remove };
+module.exports = { create, getById, update, getPlanos, getAll, remove };
