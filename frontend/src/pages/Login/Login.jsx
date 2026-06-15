@@ -16,10 +16,11 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      api.post('/api/auth/social-login', { nome: user.name, email: user.email })
-        .then(({ data }) => {
-          login(data);
-          navigate('/dashboard');
+      authService.socialLogin({ nome: user.name, email: user.email }) // usa authService, não api diretamente
+        .then((data) => {
+          setUser(data);
+          localStorage.setItem('nutriflow:user', JSON.stringify(data));
+          navigate(data.tipo === 'nutricionista' ? '/nutricionista/dashboard' : '/paciente/dashboard');
         })
         .catch(() => setErro('Erro ao autenticar com Google.'));
     }

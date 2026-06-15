@@ -32,4 +32,11 @@ const login = async ({ email, senha }) => {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 };
 
+const socialLogin = async (dados) => {
+  const response = await api.post('/api/auth/social-login', dados);
+  const token = response.data.token;
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  return { token, ...payload };
+};
+
 module.exports = { register, login };

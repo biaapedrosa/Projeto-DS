@@ -40,8 +40,8 @@ export default function App() {
           <Route path="/institucional" element={<Layout><Institucional /></Layout>} />
           <Route path="/historico" element={<PrivateRoute><Layout><Historico /></Layout></PrivateRoute>} />
           <Route path="/dashboard" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
-          <Route path="/nutricionista/dashboard" element={<PrivateRoute><Layout><NutricionistaDashboard /></Layout></PrivateRoute>} />
-          <Route path="/paciente/dashboard" element={<PrivateRoute><Layout><PacienteDashboard /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/dashboard" element={<PrivateRoute perfil="nutricionista"><Layout><NutricionistaDashboard /></Layout></PrivateRoute>} />
+          <Route path="/paciente/dashboard" element={<PrivateRoute perfil="paciente"><Layout><PacienteDashboard /></Layout></PrivateRoute>} />
           <Route path="/admin/dashboard" element={<PrivateRoute><Layout><AdminDashboard /></Layout></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
