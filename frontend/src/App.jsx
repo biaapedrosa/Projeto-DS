@@ -13,6 +13,9 @@ import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import NutricionistaDashboard from './pages/Nutricionista/NutricionistaDashboard';
 import PacienteDashboard from './pages/Paciente/PacienteDashboard';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import ListaPacientes from './pages/Nutricionista/ListaPacientes';
+import ProntuarioPaciente from './pages/Nutricionista/ProntuarioPaciente';
+import CriarPlano from './pages/Nutricionista/CriarPlano';
 
 // Layout padrão com NavBar e Footer
 function Layout({ children }) {
@@ -43,6 +46,9 @@ export default function App() {
           <Route path="/nutricionista/dashboard" element={<PrivateRoute><Layout><NutricionistaDashboard /></Layout></PrivateRoute>} />
           <Route path="/paciente/dashboard" element={<PrivateRoute><Layout><PacienteDashboard /></Layout></PrivateRoute>} />
           <Route path="/admin/dashboard" element={<PrivateRoute><Layout><AdminDashboard /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/pacientes" element={<PrivateRoute><Layout><ListaPacientes /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/paciente/:id" element={<PrivateRoute><Layout><ProntuarioPaciente /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/paciente/:id/novo-plano" element={<PrivateRoute><Layout><CriarPlano /></Layout></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
