@@ -24,10 +24,11 @@ export default function ListaPacientes() {
   }, []);
 
   const pacientesFiltrados = pacientes.filter((p) => {
-    const termo = busca.toLowerCase();
+    const termo = busca.toLowerCase().trim();
     return (
-        p.nome?.toLowerCase().includes(termo) ||
-        p.email?.toLowerCase().includes(termo)
+      p.nome?.toLowerCase().includes(termo) ||
+      p.email?.toLowerCase().includes(termo) ||
+      p.cpf?.replace(/\D/g, '').includes(termo.replace(/\D/g, ''))
     );
   });
 
@@ -47,7 +48,7 @@ export default function ListaPacientes() {
         type="text"
         value={busca}
         onChange={(e) => setBusca(e.target.value)}
-        placeholder="Buscar por nome ou e-mail..."
+        placeholder="Buscar por nome, e-mail ou CPF..."
         style={{ width: '100%', padding: '12px 16px', border: '1px solid #e0e0e0', borderRadius: '8px', fontSize: '14px', boxSizing: 'border-box', marginBottom: '24px' }}
       />
 
