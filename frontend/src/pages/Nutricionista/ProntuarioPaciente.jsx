@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import pacienteService from '../../services/pacienteService';
+import ModalNovoPlano from '../../components/ModalNovoPlano/ModalNovoPlano';
 
 export default function ProntuarioPaciente() {
   const { id } = useParams();
@@ -10,6 +11,12 @@ export default function ProntuarioPaciente() {
   const [aba, setAba] = useState('plano');
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
+  const [modalAberto, setModalAberto] = useState(false);
+
+  const carregarPlanos = async () => {
+    const dadosPlanos = await pacienteService.getPlanos(id);
+    setPlanos(dadosPlanos);
+  };
 
   useEffect(() => {
     const fetchDados = async () => {
@@ -62,11 +69,22 @@ export default function ProntuarioPaciente() {
       </div>
 
       {aba === 'anamnese' && (
-        <p style={{ color: '#888' }}>Anamnese — em construção.</p>
+        <div style={{ display: 'grid', gap: '8px', color: '#444', fontSize: '14px' }}>
+          <div><strong>Ocupação:</strong> {paciente?.ocupacao || '—'}</div>
+          <div><strong>Objetivo:</strong> {paciente?.objetivo || '—'}</div>
+          <div><strong>Vínculo UFPE:</strong> {paciente?.vinculo_ufpe || '—'}</div>
+          <div><strong>Telefone/WhatsApp:</strong> {paciente?.telefone_whatsapp || '—'}</div>
+        </div>
       )}
 
       {aba === 'avaliacao' && (
-        <p style={{ color: '#888' }}>Avaliação Antropométrica — em construção.</p>
+        <div style={{ display: 'grid', gap: '8px', color: '#444', fontSize: '14px' }}>
+          <div><strong>Sexo:</strong> {paciente?.sexo || '—'}</div>
+          <div><strong>Idade:</strong> {paciente?.idade || '—'}</div>
+          <p style={{ color: '#888', marginTop: '8px' }}>
+            Medidas antropométricas (peso, altura, etc.) dependem de campos ainda não disponíveis no model do paciente.
+          </p>
+        </div>
       )}
 
       {aba === 'plano' && (
@@ -74,7 +92,7 @@ export default function ProntuarioPaciente() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ color: '#555', margin: 0 }}>Planos alimentares</h3>
             <button
-              onClick={() => navigate(`/nutricionista/paciente/${id}/novo-plano`)}
+              onClick={() => setModalAberto(true)}
               style={{ background: '#2d6a4f', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
             >
               + Novo Plano
@@ -86,7 +104,11 @@ export default function ProntuarioPaciente() {
           ) : (
             <div style={{ display: 'grid', gap: '12px' }}>
               {planos.map((plano) => (
-                <div key={plano.id} style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '20px' }}>
+                <div
+                  key={plano.id}
+                  onClick={() => navigate(`/nutricionista/paciente/${id}/plano/${plano.id}`)}
+                  style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '20px', cursor: 'pointer' }}
+                >
                   <div style={{ fontWeight: '700', color: '#1a1a1a' }}>
                     Plano de {new Date(plano.data).toLocaleDateString('pt-BR')}
                   </div>
@@ -98,6 +120,14 @@ export default function ProntuarioPaciente() {
             </div>
           )}
         </div>
+      )}
+
+      {modalAberto && (
+        <ModalNovoPlano
+          pacienteId={id}
+          onClose={() => setModalAberto(false)}
+          onSalvo={carregarPlanos}
+        />
       )}
     </div>
   );
