@@ -1,16 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const consultaController = require('../controllers/consultaController');
 const auth = require('../middlewares/auth');
 const { authorize } = require('../middlewares/auth');
-const controller = require('../controllers/consultaController');
 
-// Todas as rotas exigem autenticação de nutricionista
-router.use(auth);
-router.use(authorize('nutricionista', 'admin'));
-
-router.get('/paciente/:pacienteId', controller.getByPaciente);
-router.get('/:id', controller.getById);
-router.post('/', controller.create);
-router.put('/:id/anamnese', controller.saveAnamnese);
+// Apenas nutricionistas autenticados podem criar e visualizar consultas
+router.post('/', auth, authorize('nutricionista', 'admin'), consultaController.criar);
+router.get('/:id', auth, authorize('nutricionista', 'admin'), consultaController.buscarPorId);
+router.get('/paciente/:paciente_id', auth, authorize('nutricionista', 'admin'), consultaController.listarPorPaciente);
 
 module.exports = router;

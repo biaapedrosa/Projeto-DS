@@ -22,7 +22,7 @@ app.use('/api/nutricionistas', nutricionistaRoutes);
 app.use('/api/consultas', consultaRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: ' API Clínica de Nutrição funcionando!' });
+  res.json({ message: '✅ API Clínica de Nutrição funcionando!' });
 });
 
 module.exports = app;

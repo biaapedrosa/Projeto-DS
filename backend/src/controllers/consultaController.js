@@ -1,40 +1,35 @@
 const consultaService = require('../services/consultaService');
 
-const getByPaciente = async (req, res) => {
+const criar = async (req, res) => {
   try {
-    const consultas = await consultaService.getByPaciente(req.params.pacienteId);
-    res.json(consultas);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-const getById = async (req, res) => {
-  try {
-    const consulta = await consultaService.getById(req.params.id);
-    if (!consulta) return res.status(404).json({ error: 'Consulta não encontrada.' });
-    res.json(consulta);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-const create = async (req, res) => {
-  try {
-    const consulta = await consultaService.create(req.body);
+    // Garante que o nutricionista_id vem do token JWT, não do body
+    const dados = {
+      ...req.body,
+      nutricionista_id: req.user.id,
+    };
+    const consulta = await consultaService.criar(dados);
     res.status(201).json(consulta);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
-const saveAnamnese = async (req, res) => {
+const buscarPorId = async (req, res) => {
   try {
-    const consulta = await consultaService.saveAnamnese(req.params.id, req.body);
-    res.json(consulta);
+    const consulta = await consultaService.buscarPorId(req.params.id);
+    res.status(200).json(consulta);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(404).json({ error: err.message });
   }
 };
 
-module.exports = { getByPaciente, getById, create, saveAnamnese };
+const listarPorPaciente = async (req, res) => {
+  try {
+    const consultas = await consultaService.listarPorPaciente(req.params.paciente_id);
+    res.status(200).json(consultas);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+};
+
+module.exports = { criar, buscarPorId, listarPorPaciente };
