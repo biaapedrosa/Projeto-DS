@@ -11,10 +11,22 @@ const create = async ({ nome, cpf, email, telefone, crn, senha }) => {
 
 const findAll = () => nutricionistaRepository.findAll();
 
+const getById = async (id) => {
+  const nutricionista = await nutricionistaRepository.findById(id);
+  if (!nutricionista) throw new Error('Nutricionista não encontrado!');
+  return nutricionista;
+};
+
+const update = async (id, dados) => {
+  const nutricionista = await nutricionistaRepository.findById(id);
+  if (!nutricionista) throw new Error('Nutricionista não encontrado!');
+  return nutricionistaRepository.update(id, dados);
+};
+
 const remove = async (id) => {
   const nutricionista = await nutricionistaRepository.findById(id);
   if (!nutricionista) throw new Error('Nutricionista não encontrado!');
   return nutricionistaRepository.remove(id);
 };
 
-module.exports = { create, findAll, remove };
+module.exports = { create, findAll, getById, update, remove };

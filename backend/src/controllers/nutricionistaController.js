@@ -18,6 +18,24 @@ const findAll = async (req, res) => {
   }
 };
 
+const getById = async (req, res) => {
+  try {
+    const nutricionista = await nutricionistaService.getById(req.params.id);
+    res.status(200).json(nutricionista);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+};
+
+const update = async (req, res) => {
+  try {
+    const nutricionista = await nutricionistaService.update(req.params.id, req.body);
+    res.status(200).json(nutricionista);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 const remove = async (req, res) => {
   try {
     await nutricionistaService.remove(req.params.id);
@@ -27,4 +45,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { create, findAll, remove };
+module.exports = { create, findAll, getById, update, remove };

@@ -12,7 +12,10 @@ const create = ({ crn, ...resto }) =>
 const findAll = () =>
   prisma.nutricionista.findMany({ orderBy: { id: 'asc' } });
 
+const update = (id, dados) =>
+  prisma.nutricionista.update({ where: { id: Number(id) }, data: dados });
+
 const remove = (id) =>
   prisma.nutricionista.delete({ where: { id: Number(id) } });
 
-module.exports = { findByEmail, findById, create, findAll, remove };
+module.exports = { findByEmail, findById, create, findAll, update, remove };
