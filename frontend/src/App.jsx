@@ -12,6 +12,7 @@ import './index.css';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import NutricionistaDashboard from './pages/Nutricionista/NutricionistaDashboard';
 import PacienteDashboard from './pages/Paciente/PacienteDashboard';
+import PlanoDetalhe from './pages/Paciente/PlanoDetalhe';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 
 // Layout padrão com NavBar e Footer
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/dashboard" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
           <Route path="/nutricionista/dashboard" element={<PrivateRoute><Layout><NutricionistaDashboard /></Layout></PrivateRoute>} />
           <Route path="/paciente/dashboard" element={<PrivateRoute><Layout><PacienteDashboard /></Layout></PrivateRoute>} />
+          <Route path="/paciente/plano/:id" element={<PrivateRoute><Layout><PlanoDetalhe /></Layout></PrivateRoute>} />
           <Route path="/admin/dashboard" element={<PrivateRoute><Layout><AdminDashboard /></Layout></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
