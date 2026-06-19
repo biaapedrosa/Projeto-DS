@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import Login from '../pages/Login/Login'
+import Login from '../pages/Login'
 
 // criei funções falsas para simular o login e a navegação da tela
 const { mockLogin, mockNavigate } = vi.hoisted(() => {
@@ -10,12 +10,14 @@ const { mockLogin, mockNavigate } = vi.hoisted(() => {
   }
 })
 
-// fiz o mock do useNavigate, porque no teste eu não quero navegar de verdade
+// fiz o mock do useNavigate e do useSearchParams, porque no teste eu não quero
+// navegar de verdade nem depender de um <Router> em volta do componente
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
   return {
     ...actual,
-    useNavigate: () => mockNavigate
+    useNavigate: () => mockNavigate,
+    useSearchParams: () => [new URLSearchParams(), vi.fn()]
   }
 })
 
@@ -23,10 +25,16 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../context/AuthContext', () => {
   return {
     useAuth: () => ({
-      login: mockLogin
+      login: mockLogin,
+      loginDemo: vi.fn()
     })
   }
 })
+
+// fiz o mock do Auth0, porque no teste não há Auth0Provider em volta
+vi.mock('@auth0/auth0-react', () => ({
+  useAuth0: () => ({ loginWithRedirect: vi.fn(), user: null, isAuthenticated: false })
+}))
 
 // fiz o mock da API para simular chamadas ao backend sem depender do servidor real
 vi.mock('../services/api', () => ({

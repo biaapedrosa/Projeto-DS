@@ -1,7 +1,7 @@
 import {useAuth} from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
 import planoService from '../../services/planoService';
-import PlanoCard from '../../components/PlanoCard/PlanoCard';
+import PlanoCard from '../../components/PlanoCard';
 
 const Dashboard = () => {
   const [planos, setPlanos] = useState([]);
@@ -55,18 +55,18 @@ const Dashboard = () => {
   const planosAntigos = planos.filter(p => p.status !== 'ativo');
 
   return (
-    <div style={{ padding: '32px', maxWidth: '800px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{ color: '#2d6a4f', margin: 0 }}>Meus Planos Alimentares</h2>
+    <div className="mx-auto max-w-[800px] p-8">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="m-0 text-nutri">Meus Planos Alimentares</h2>
         <button
           onClick={() => setModalAberto(true)}
-          style={{ background: '#2d6a4f', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+          className="cursor-pointer rounded-lg border-0 bg-nutri px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
         >
           + Novo Plano
         </button>
       </div>
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+      {erro && <p className="text-red-600">{erro}</p>}
 
       {planos.length === 0 ? (
         <p>Nenhum plano encontrado.</p>
@@ -74,13 +74,13 @@ const Dashboard = () => {
         <>
           {planoAtual && (
             <div>
-              <h3 style={{ color: '#555', marginBottom: '12px' }}>Plano Atual</h3>
+              <h3 className="mb-3 text-[#555]">Plano Atual</h3>
               <PlanoCard plano={planoAtual} tipo="atual" />
             </div>
           )}
           {planosAntigos.length > 0 && (
-            <div style={{ marginTop: '32px' }}>
-              <h3 style={{ color: '#555', marginBottom: '12px' }}>Histórico de Planos</h3>
+            <div className="mt-8">
+              <h3 className="mb-3 text-[#555]">Histórico de Planos</h3>
               {planosAntigos.map(plano => (
                 <PlanoCard key={plano.id} plano={plano} tipo="antigo" />
               ))}
@@ -91,18 +91,18 @@ const Dashboard = () => {
 
       {/* Modal Novo Plano */}
       {modalAberto && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', borderRadius: '16px', padding: '40px', maxWidth: '480px', width: '90%', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
-            <h2 style={{ color: '#2d6a4f', marginBottom: '24px', fontSize: '22px' }}>Novo Plano Alimentar</h2>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50">
+          <div className="w-[90%] max-w-[480px] rounded-2xl bg-white p-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+            <h2 className="mb-6 text-[22px] text-nutri">Novo Plano Alimentar</h2>
 
             {erroModal && (
-              <div style={{ background: '#ffebee', color: '#c62828', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }}>
+              <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
                 {erroModal}
               </div>
             )}
 
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333', fontSize: '14px' }}>
+            <div className="mb-5">
+              <label className="mb-2 block text-sm font-semibold text-[#333]">
                 Descrição do plano
               </label>
               <textarea
@@ -110,35 +110,35 @@ const Dashboard = () => {
                 onChange={(e) => setNovoPlano({ ...novoPlano, descricao: e.target.value })}
                 placeholder="Descreva o plano alimentar..."
                 rows={4}
-                style={{ width: '100%', padding: '12px', border: '1px solid #e0e0e0', borderRadius: '8px', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit' }}
+                className="box-border w-full resize-y rounded-lg border border-[#e0e0e0] p-3 font-sans text-sm outline-none transition-shadow focus:border-nutri-light focus:ring-2 focus:ring-nutri-light/20"
               />
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333', fontSize: '14px' }}>
+            <div className="mb-6">
+              <label className="mb-2 block text-sm font-semibold text-[#333]">
                 Status
               </label>
               <select
                 value={novoPlano.status}
                 onChange={(e) => setNovoPlano({ ...novoPlano, status: e.target.value })}
-                style={{ width: '100%', padding: '12px', border: '1px solid #e0e0e0', borderRadius: '8px', fontSize: '14px', boxSizing: 'border-box' }}
+                className="box-border w-full rounded-lg border border-[#e0e0e0] p-3 text-sm outline-none transition-shadow focus:border-nutri-light focus:ring-2 focus:ring-nutri-light/20"
               >
                 <option value="ativo">Ativo</option>
                 <option value="inativo">Inativo</option>
               </select>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div className="flex justify-end gap-3">
               <button
                 onClick={handleFechar}
-                style={{ padding: '10px 24px', border: '1px solid #ccc', borderRadius: '8px', background: 'white', color: '#555', fontSize: '14px', cursor: 'pointer' }}
+                className="cursor-pointer rounded-lg border border-[#ccc] bg-white px-6 py-2.5 text-sm text-[#555] transition-colors hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSalvar}
                 disabled={salvando}
-                style={{ padding: '10px 24px', border: 'none', borderRadius: '8px', background: '#2d6a4f', color: 'white', fontSize: '14px', fontWeight: '600', cursor: salvando ? 'not-allowed' : 'pointer', opacity: salvando ? 0.7 : 1 }}
+                className="cursor-pointer rounded-lg border-0 bg-nutri px-6 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {salvando ? 'Salvando...' : 'Salvar plano'}
               </button>

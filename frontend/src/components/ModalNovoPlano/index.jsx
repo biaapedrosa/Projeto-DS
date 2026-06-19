@@ -87,85 +87,86 @@ export default function ModalNovoPlano({ pacienteId, onClose, onSalvo }) {
     }
   };
 
-  const btnSecundario = { background: '#eef4ef', color: '#2d6a4f', border: 'none', borderRadius: '6px', padding: '6px 12px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' };
-  const inputStyle = { padding: '8px 12px', border: '1px solid #e0e0e0', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
+  const btnSecundario = 'cursor-pointer rounded-md border-0 bg-[#eef4ef] px-3 py-1.5 text-[13px] font-semibold text-nutri';
+  const btnRemover = 'cursor-pointer rounded-md border-0 bg-red-50 px-3 py-1.5 text-[13px] font-semibold text-red-700';
+  const inputClass = 'box-border rounded-md border border-[#e0e0e0] px-3 py-2 text-sm outline-none transition-shadow focus:border-nutri-light focus:ring-2 focus:ring-nutri-light/20';
 
   return (
     <div
       onClick={onClose}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '40px 16px', overflowY: 'auto', zIndex: 1000 }}
+      className="fixed inset-0 z-[1000] flex items-start justify-center overflow-y-auto bg-black/45 px-4 py-10"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ background: 'white', borderRadius: '12px', padding: '32px', maxWidth: '700px', width: '100%', boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}
+        className="w-full max-w-[700px] rounded-xl bg-white p-8 shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ color: '#1a1a1a', margin: 0 }}>Novo Plano Alimentar</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '22px', color: '#888', lineHeight: 1 }}>×</button>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="m-0 text-[#1a1a1a]">Novo Plano Alimentar</h2>
+          <button onClick={onClose} className="cursor-pointer border-0 bg-transparent text-[22px] leading-none text-[#888]">×</button>
         </div>
 
         {erro && (
-          <div style={{ background: '#ffebee', color: '#c62828', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }}>
+          <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
             {erro}
           </div>
         )}
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '600', color: '#333' }}>Data do plano</label>
-          <input type="date" value={data} onChange={(e) => setData(e.target.value)} style={{ ...inputStyle, width: '200px' }} />
+        <div className="mb-5">
+          <label className="mb-1.5 block text-sm font-semibold text-[#333]">Data do plano</label>
+          <input type="date" value={data} onChange={(e) => setData(e.target.value)} className={`${inputClass} w-[200px]`} />
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h3 style={{ color: '#555', margin: 0, fontSize: '15px' }}>Refeições</h3>
-          <button onClick={addRefeicao} style={btnSecundario}>+ Refeição</button>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="m-0 text-[15px] text-[#555]">Refeições</h3>
+          <button onClick={addRefeicao} className={btnSecundario}>+ Refeição</button>
         </div>
 
-        {refeicoes.length === 0 && <p style={{ color: '#888', fontSize: '14px' }}>Nenhuma refeição adicionada.</p>}
+        {refeicoes.length === 0 && <p className="text-sm text-[#888]">Nenhuma refeição adicionada.</p>}
 
-        <div style={{ display: 'grid', gap: '16px' }}>
+        <div className="grid gap-4">
           {refeicoes.map((refeicao, ri) => (
-            <div key={ri} style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '16px' }}>
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
+            <div key={ri} className="rounded-[10px] border border-[#e0e0e0] p-4">
+              <div className="mb-3 flex items-center gap-2">
                 <input
                   placeholder="Nome da refeição (ex: Café da manhã)"
                   value={refeicao.nome}
                   onChange={(e) => updateRefeicao(ri, 'nome', e.target.value)}
-                  style={{ ...inputStyle, flex: 1 }}
+                  className={`${inputClass} flex-1`}
                 />
                 <input
                   type="number"
                   placeholder="Hora"
                   value={refeicao.horario}
                   onChange={(e) => updateRefeicao(ri, 'horario', e.target.value)}
-                  style={{ ...inputStyle, width: '80px' }}
+                  className={`${inputClass} w-20`}
                 />
-                <button onClick={() => removeRefeicao(ri)} style={{ ...btnSecundario, background: '#ffebee', color: '#c62828' }}>Remover</button>
+                <button onClick={() => removeRefeicao(ri)} className={btnRemover}>Remover</button>
               </div>
 
-              <div style={{ paddingLeft: '12px', borderLeft: '3px solid #eef4ef' }}>
-                <button onClick={() => addOpcao(ri)} style={{ ...btnSecundario, marginBottom: '8px' }}>+ Opção</button>
+              <div className="border-l-[3px] border-[#eef4ef] pl-3">
+                <button onClick={() => addOpcao(ri)} className={`${btnSecundario} mb-2`}>+ Opção</button>
                 {refeicao.opcoes.map((opcao, oi) => (
-                  <div key={oi} style={{ marginBottom: '12px' }}>
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
+                  <div key={oi} className="mb-3">
+                    <div className="mb-1.5 flex gap-2">
                       <input
                         placeholder={`Opção ${oi + 1}`}
                         value={opcao.nome}
                         onChange={(e) => updateOpcao(ri, oi, e.target.value)}
-                        style={{ ...inputStyle, flex: 1 }}
+                        className={`${inputClass} flex-1`}
                       />
-                      <button onClick={() => removeOpcao(ri, oi)} style={{ ...btnSecundario, background: '#ffebee', color: '#c62828' }}>×</button>
+                      <button onClick={() => removeOpcao(ri, oi)} className={btnRemover}>×</button>
                     </div>
-                    <div style={{ paddingLeft: '12px' }}>
-                      <button onClick={() => addAlimento(ri, oi)} style={{ ...btnSecundario, marginBottom: '6px' }}>+ Alimento</button>
+                    <div className="pl-3">
+                      <button onClick={() => addAlimento(ri, oi)} className={`${btnSecundario} mb-1.5`}>+ Alimento</button>
                       {opcao.alimentos.map((alimento, ai) => (
-                        <div key={ai} style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
+                        <div key={ai} className="mb-1.5 flex gap-2">
                           <input
                             placeholder="Alimento"
                             value={alimento.nome}
                             onChange={(e) => updateAlimento(ri, oi, ai, e.target.value)}
-                            style={{ ...inputStyle, flex: 1 }}
+                            className={`${inputClass} flex-1`}
                           />
-                          <button onClick={() => removeAlimento(ri, oi, ai)} style={{ ...btnSecundario, background: '#ffebee', color: '#c62828' }}>×</button>
+                          <button onClick={() => removeAlimento(ri, oi, ai)} className={btnRemover}>×</button>
                         </div>
                       ))}
                     </div>
@@ -176,12 +177,12 @@ export default function ModalNovoPlano({ pacienteId, onClose, onSalvo }) {
           ))}
         </div>
 
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
-          <button onClick={onClose} style={{ ...btnSecundario, background: '#f0f0f0', color: '#555', padding: '10px 20px' }}>Cancelar</button>
+        <div className="mt-6 flex justify-end gap-3">
+          <button onClick={onClose} className="cursor-pointer rounded-md border-0 bg-[#f0f0f0] px-5 py-2.5 text-[13px] font-semibold text-[#555]">Cancelar</button>
           <button
             onClick={handleSalvar}
             disabled={salvando}
-            style={{ background: '#2d6a4f', color: 'white', padding: '10px 24px', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+            className="cursor-pointer rounded-lg border-0 bg-nutri px-6 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-70"
           >
             {salvando ? 'Salvando...' : 'Salvar plano'}
           </button>
