@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import planoService from '../../services/planoService';
+import planoService from '../../../services/planoService';
+import { ArrowLeft } from 'lucide-react';
 
 export default function DetalhePlano() {
   const { id, planoId } = useParams();
@@ -36,52 +37,52 @@ export default function DetalhePlano() {
     }
   };
 
-  if (carregando) return <div style={{ padding: '32px' }}>Carregando plano...</div>;
-  if (erro) return <div style={{ padding: '32px', color: 'red' }}>{erro}</div>;
-  if (!plano) return <div style={{ padding: '32px' }}>Plano não encontrado.</div>;
+  if (carregando) return <div className="p-8">Carregando plano...</div>;
+  if (erro) return <div className="p-8 text-red-600">{erro}</div>;
+  if (!plano) return <div className="p-8">Plano não encontrado.</div>;
 
   return (
-    <div style={{ padding: '32px', maxWidth: '800px', margin: '0 auto' }}>
+    <div className="mx-auto max-w-[800px] p-8">
       <button
         onClick={() => navigate(`/nutricionista/paciente/${id}`)}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#2d6a4f', fontSize: '14px', marginBottom: '16px' }}
+        className="mb-4 inline-flex cursor-pointer items-center gap-1.5 border-0 bg-transparent text-sm text-nutri"
       >
-        ← Voltar ao prontuário
+        <ArrowLeft size={16} /> Voltar ao prontuário
       </button>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{ color: '#1a1a1a', margin: 0 }}>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="m-0 text-[#1a1a1a]">
           Plano de {new Date(plano.data).toLocaleDateString('pt-BR')}
         </h2>
         <button
           onClick={handleExcluir}
           disabled={excluindo}
-          style={{ background: '#ffebee', color: '#c62828', padding: '10px 20px', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+          className="cursor-pointer rounded-lg border-0 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 disabled:opacity-70"
         >
           {excluindo ? 'Excluindo...' : 'Excluir plano'}
         </button>
       </div>
 
       {(!plano.refeicoes || plano.refeicoes.length === 0) ? (
-        <p style={{ color: '#888' }}>Nenhuma refeição cadastrada neste plano.</p>
+        <p className="text-[#888]">Nenhuma refeição cadastrada neste plano.</p>
       ) : (
-        <div style={{ display: 'grid', gap: '16px' }}>
+        <div className="grid gap-4">
           {plano.refeicoes.map((refeicao) => (
-            <div key={refeicao.id} style={{ background: 'white', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <h3 style={{ color: '#2d6a4f', margin: 0, fontSize: '16px' }}>{refeicao.nome}</h3>
+            <div key={refeicao.id} className="rounded-xl border border-[#e0e0e0] bg-white p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="m-0 text-base text-nutri">{refeicao.nome}</h3>
                 {refeicao.horario != null && (
-                  <span style={{ fontSize: '13px', color: '#888' }}>{String(refeicao.horario).padStart(2, '0')}h</span>
+                  <span className="text-[13px] text-[#888]">{String(refeicao.horario).padStart(2, '0')}h</span>
                 )}
               </div>
 
               {(!refeicao.opcoes || refeicao.opcoes.length === 0) ? (
-                <p style={{ color: '#aaa', fontSize: '13px', margin: 0 }}>Sem opções.</p>
+                <p className="m-0 text-[13px] text-[#aaa]">Sem opções.</p>
               ) : (
                 refeicao.opcoes.map((opcao, oi) => (
-                  <div key={opcao.id || oi} style={{ marginBottom: '8px', paddingLeft: '12px', borderLeft: '3px solid #eef4ef' }}>
-                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#333' }}>{opcao.nome || `Opção ${oi + 1}`}</div>
-                    <ul style={{ margin: '4px 0 0', paddingLeft: '18px', color: '#666', fontSize: '13px' }}>
+                  <div key={opcao.id || oi} className="mb-2 border-l-[3px] border-[#eef4ef] pl-3">
+                    <div className="text-sm font-semibold text-[#333]">{opcao.nome || `Opção ${oi + 1}`}</div>
+                    <ul className="mt-1 list-disc pl-[18px] text-[13px] text-[#666]">
                       {(opcao.alimentos || []).map((alimento, ai) => (
                         <li key={alimento.id || ai}>{alimento.nome}</li>
                       ))}

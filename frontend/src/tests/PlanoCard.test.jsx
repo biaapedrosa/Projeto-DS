@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import PlanoCard from '../components/PlanoCard/PlanoCard'
+import PlanoCard from '../components/PlanoCard'
 
 describe('PlanoCard', () => {
   // criei um plano de exemplo para usar em todos os testes
@@ -47,6 +47,6 @@ describe('PlanoCard', () => {
     render(<PlanoCard plano={plano} tipo="historico" />)
 
     // verifiquei se o badge de plano anterior aparece corretamente
-    expect(screen.getByText('📋 Plano Anterior')).toBeInTheDocument()
+    expect(screen.getByText('Plano Anterior')).toBeInTheDocument()
   })
 })
