@@ -8,7 +8,7 @@ const planoRoutes = require('./routes/planoRoutes');
 const noticiaRoutes = require('./routes/noticiaRoutes');
 const nutricionistaRoutes = require('./routes/nutricionistaRoutes');
 const consultaRoutes = require('./routes/consultaRoutes');
-const pacienteDashboardRoutes = require('./routes/pacienteDashboardRoutes');
+const pacienteDashboardRoutes = require('./routes/pacientedashboardroutes');
 
 const app = express();
 

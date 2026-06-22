@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/auth');
 const { authorize } = require('../middlewares/auth');
-const controller = require('../controllers/pacienteDashboardController');
+const controller = require('../controllers/pacientedashboardcontroller');
 
 // Todas as rotas exigem autenticação como paciente
 router.use(auth);
