@@ -6,7 +6,7 @@ const { authorize } = require('../middlewares/auth');
 
 // Apenas nutricionistas autenticados podem criar e visualizar consultas
 router.post('/', auth, authorize('nutricionista', 'admin'), consultaController.criar);
-router.get('/:id', auth, authorize('nutricionista', 'admin'), consultaController.buscarPorId);
 router.get('/paciente/:paciente_id', auth, authorize('nutricionista', 'admin'), consultaController.listarPorPaciente);
+router.get('/:id', auth, authorize('nutricionista', 'admin'), consultaController.buscarPorId);
 
 module.exports = router;

@@ -23,9 +23,6 @@ const criar = async (dados) => {
 
   const tipoPaciente = paciente.tipo_paciente || 'Adulto_Idoso';
 
-  // Usa $transaction para garantir atomicidade
-  const prisma = require('../db');
-
   return await prisma.$transaction(async (tx) => {
     // 1. Consulta principal
     const consulta = await tx.consulta.create({
