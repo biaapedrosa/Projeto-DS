@@ -1,9 +1,10 @@
 const pacienteService = require('../services/pacienteService');
 
-const create = async (req, res) => {
+// POST /api/pacientes/precadastro — nutricionista cadastra dados básicos do paciente
+const preCadastrar = async (req, res) => {
   try {
-    const paciente = await pacienteService.create(req.body);
-    res.status(201).json(paciente);
+    const paciente = await pacienteService.preCadastrar(req.body);
+    res.status(201).json({ message: 'Paciente pré-cadastrado com sucesso!', paciente });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -35,6 +36,7 @@ const getPlanos = async (req, res) => {
     res.status(404).json({ error: err.message });
   }
 };
+
 const getAll = async (req, res) => {
   try {
     const pacientes = await pacienteService.getAll();
@@ -42,7 +44,8 @@ const getAll = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
+
 const remove = async (req, res) => {
   try {
     await pacienteService.remove(req.params.id);
@@ -50,6 +53,6 @@ const remove = async (req, res) => {
   } catch (err) {
     res.status(404).json({ error: err.message });
   }
-}
+};
 
-module.exports = { create, getById, update, getPlanos, getAll, remove };
+module.exports = { preCadastrar, getById, update, getPlanos, getAll, remove };
