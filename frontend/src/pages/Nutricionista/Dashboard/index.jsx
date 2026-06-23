@@ -1,18 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../../services/api';
-import { UserPlus, ArrowLeft } from 'lucide-react';
+import { UserPlus, Users, ArrowLeft } from 'lucide-react';
 
 const formInicial = { nome: '', cpf: '', cartao_sus: '', email: '', telefone_whatsapp: '', data_nascimento: '' };
 
 export default function NutricionistaDashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [tela, setTela] = useState(null);
   const [form, setForm] = useState(formInicial);
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
+
+  // Permite abrir direto no formulário de cadastro (ex.: vindo da lista de pacientes).
+  useEffect(() => {
+    if (searchParams.get('acao') === 'cadastrar') setTela('cadastrar-paciente');
+  }, [searchParams]);
 
   const handleLogout = () => { logout(); navigate('/login'); };
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -52,6 +58,17 @@ export default function NutricionistaDashboard() {
                 </div>
                 <div className="text-[15px] font-bold text-[#1a1a1a]">Cadastrar Paciente</div>
                 <div className="mt-1 text-[13px] text-[#888]">Registrar novo paciente</div>
+              </button>
+
+              <button
+                onClick={() => navigate('/nutricionista/pacientes')}
+                className="cursor-pointer rounded-xl border border-[#e0e0e0] bg-white p-6 text-left shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(26,58,42,0.12)]"
+              >
+                <div className="mb-2.5 flex h-12 w-12 items-center justify-center rounded-xl bg-nutri-100">
+                  <Users size={24} color="#2d6a4f" strokeWidth={2} />
+                </div>
+                <div className="text-[15px] font-bold text-[#1a1a1a]">Meus Pacientes</div>
+                <div className="mt-1 text-[13px] text-[#888]">Ver prontuários, planos e fichas médicas</div>
               </button>
             </div>
             <button onClick={handleLogout} className="mt-6 cursor-pointer border-0 bg-transparent text-sm text-[#555] underline">

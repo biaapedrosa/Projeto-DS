@@ -3,10 +3,11 @@ import userEvent from '@testing-library/user-event'
 import Login from '../pages/Login'
 
 // criei funções falsas para simular o login e a navegação da tela
-const { mockLogin, mockNavigate } = vi.hoisted(() => {
+const { mockLogin, mockNavigate, mockAtivarConta } = vi.hoisted(() => {
   return {
     mockLogin: vi.fn(),
-    mockNavigate: vi.fn()
+    mockNavigate: vi.fn(),
+    mockAtivarConta: vi.fn()
   }
 })
 
@@ -26,7 +27,9 @@ vi.mock('../context/AuthContext', () => {
   return {
     useAuth: () => ({
       login: mockLogin,
-      loginDemo: vi.fn()
+      loginDemo: vi.fn(),
+      loginSocial: vi.fn(),
+      ativarConta: mockAtivarConta
     })
   }
 })
@@ -94,10 +97,9 @@ describe('Login', () => {
     expect(await screen.findByText(/Email ou senha/i)).toBeInTheDocument()
   })
 
-  it('abre o modal de cadastro após cadastro bem-sucedido', async () => {
-    // importo o mock da api para configurar o retorno de sucesso
-    const api = (await import('../services/api')).default
-    api.post.mockResolvedValueOnce({ data: {} })
+  it('ativa a conta do paciente e redireciona após sucesso', async () => {
+    // configurei a ativação falsa para retornar um paciente (etapa 2 do pré-cadastro)
+    mockAtivarConta.mockResolvedValueOnce({ tipo: 'paciente' })
 
     // preparei a simulação do usuário
     const user = userEvent.setup()
@@ -105,19 +107,20 @@ describe('Login', () => {
     // fiz a renderização da tela de login
     render(<Login />)
 
-    // troco para o modo cadastro clicando no link
-    await user.click(screen.getByText('Cadastre-se'))
+    // troco para o modo ativação de conta clicando no link
+    await user.click(screen.getByText('Ative aqui'))
 
-    // simulei o usuário preenchendo os campos do cadastro
-    await user.type(screen.getByPlaceholderText('Seu nome completo'), 'João Teste')
+    // simulei o usuário preenchendo os campos da ativação (CPF + email + senha)
+    await user.type(screen.getByPlaceholderText('Somente números'), '12345678900')
     await user.type(screen.getByPlaceholderText('seu@email.com'), 'joao@teste.com')
     await user.type(screen.getByPlaceholderText('••••••••'), '123456')
 
-    // simulei o usuário clicando no botão de cadastrar
-    await user.click(screen.getByRole('button', { name: 'Cadastrar' }))
+    // simulei o usuário clicando no botão de ativar conta
+    await user.click(screen.getByRole('button', { name: 'Ativar conta' }))
 
-    // verifico se o modal aparece com a mensagem de sucesso
-    expect(await screen.findByText('Cadastro realizado!')).toBeInTheDocument()
+    // verifico se a ativação foi chamada e o paciente foi redirecionado ao dashboard
+    expect(mockAtivarConta).toHaveBeenCalledWith({ cpf: '12345678900', email: 'joao@teste.com', senha: '123456' })
+    expect(mockNavigate).toHaveBeenCalledWith('/paciente/dashboard')
   })
 
   it('não submete o formulário de login com campos vazios', async () => {

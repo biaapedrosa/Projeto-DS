@@ -1,4 +1,5 @@
 const consultaService = require('../services/consultaService');
+const { traduzErro } = require('../utils/erros');
 
 const criar = async (req, res) => {
   try {
@@ -10,7 +11,7 @@ const criar = async (req, res) => {
     const consulta = await consultaService.criar(dados);
     res.status(201).json(consulta);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: traduzErro(err) });
   }
 };
 
@@ -19,7 +20,7 @@ const buscarPorId = async (req, res) => {
     const consulta = await consultaService.buscarPorId(req.params.id);
     res.status(200).json(consulta);
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(404).json({ error: traduzErro(err) });
   }
 };
 
@@ -28,7 +29,7 @@ const listarPorPaciente = async (req, res) => {
     const consultas = await consultaService.listarPorPaciente(req.params.paciente_id);
     res.status(200).json(consultas);
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(404).json({ error: traduzErro(err) });
   }
 };
 

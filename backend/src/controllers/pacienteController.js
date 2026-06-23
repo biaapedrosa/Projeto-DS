@@ -1,4 +1,5 @@
 const pacienteService = require('../services/pacienteService');
+const { traduzErro } = require('../utils/erros');
 
 // Garante que um paciente só acesse a própria ficha.
 // Nutricionista e admin podem acessar qualquer paciente.
@@ -14,7 +15,17 @@ const preCadastrar = async (req, res) => {
     const paciente = await pacienteService.preCadastrar(req.body);
     res.status(201).json({ message: 'Paciente pré-cadastrado com sucesso!', paciente });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: traduzErro(err) });
+  }
+};
+
+// POST /api/pacientes — admin/nutricionista cadastra paciente já ativo
+const criar = async (req, res) => {
+  try {
+    const paciente = await pacienteService.criar(req.body);
+    res.status(201).json(paciente);
+  } catch (err) {
+    res.status(400).json({ error: traduzErro(err) });
   }
 };
 
@@ -24,7 +35,7 @@ const getById = async (req, res) => {
     const paciente = await pacienteService.getById(req.params.id);
     res.status(200).json(paciente);
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(404).json({ error: traduzErro(err) });
   }
 };
 
@@ -34,7 +45,7 @@ const update = async (req, res) => {
     const paciente = await pacienteService.update(req.params.id, req.body);
     res.status(200).json(paciente);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: traduzErro(err) });
   }
 };
 
@@ -44,7 +55,7 @@ const getPlanos = async (req, res) => {
     const planos = await pacienteService.getPlanos(req.params.id);
     res.status(200).json(planos);
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(404).json({ error: traduzErro(err) });
   }
 };
 
@@ -53,7 +64,7 @@ const getAll = async (req, res) => {
     const pacientes = await pacienteService.getAll();
     res.status(200).json(pacientes);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: traduzErro(err) });
   }
 };
 
@@ -62,8 +73,8 @@ const remove = async (req, res) => {
     await pacienteService.remove(req.params.id);
     res.status(204).send();
   } catch (err) {
-    res.status(404).json({ error: err.message });
+    res.status(404).json({ error: traduzErro(err) });
   }
 };
 
-module.exports = { preCadastrar, getById, update, getPlanos, getAll, remove };
+module.exports = { criar, preCadastrar, getById, update, getPlanos, getAll, remove };

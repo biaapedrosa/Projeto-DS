@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import planoService from '../../services/planoService';
 import pacienteService from '../../services/pacienteService';
 import { Leaf, AlertTriangle, Salad, ClipboardList, Target, Calendar, FolderClock, ArrowRight } from 'lucide-react';
@@ -9,18 +9,12 @@ const VERDE = '#2d6a4f';
 const VERDE_CLARO = '#4CAF7D';
 
 export default function PacienteDashboard() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [planos, setPlanos] = useState([]);
   const [perfil, setPerfil] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   useEffect(() => {
     if (!user?.id) { setCarregando(false); return; }
@@ -48,13 +42,17 @@ export default function PacienteDashboard() {
   const primeiroNome = nome.split(' ')[0];
   const iniciais = nome.split(' ').slice(0, 2).map((p) => p[0]?.toUpperCase()).join('');
 
-  const planoAtual = planos.find((p) => p.status === 'ativo');
-  const planosAntigos = planos.filter((p) => p.status !== 'ativo');
-
   const fmtData = (p) => {
     const d = p?.data_criacao || p?.created_at || p?.data;
     return d ? new Date(d).toLocaleDateString('pt-BR') : '—';
   };
+
+  // O plano "atual" é o marcado como ativo (modo demo) ou, na ausência desse
+  // campo (schema real só tem data + refeições), o mais recente por data.
+  const dataPlano = (p) => new Date(p?.data_criacao || p?.created_at || p?.data || 0).getTime();
+  const planosOrdenados = [...planos].sort((a, b) => dataPlano(b) - dataPlano(a));
+  const planoAtual = planos.find((p) => p.status === 'ativo') || planosOrdenados[0] || null;
+  const planosAntigos = planosOrdenados.filter((p) => p.id !== planoAtual?.id);
 
   const cards = [
     { Icon: Salad, rotulo: 'Plano ativo', valor: planoAtual ? 'Em andamento' : 'Nenhum', cor: planoAtual ? VERDE_CLARO : '#b0b0b0' },
@@ -78,12 +76,6 @@ export default function PacienteDashboard() {
               <p className="mt-1 text-[13px] opacity-80">{perfil?.email || user?.email}</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="cursor-pointer rounded-[10px] border border-white/40 bg-white/10 px-5 py-2.5 font-semibold text-white transition-colors hover:border-white/70 hover:bg-white/20"
-          >
-            Sair
-          </button>
         </div>
 
         {erro && (
@@ -129,6 +121,43 @@ export default function PacienteDashboard() {
                   </p>
                 </div>
               </div>
+
+              {/* Detalhes do plano: refeições, opções e alimentos */}
+              {planoAtual.refeicoes?.length > 0 ? (
+                <div className="mt-5 border-t border-nutri-100 pt-4">
+                  <h4 className="mb-3 text-sm font-bold uppercase tracking-[0.04em] text-nutri">Refeições do plano</h4>
+                  <div className="grid gap-3">
+                    {planoAtual.refeicoes.map((ref, ri) => (
+                      <div key={ref.id || ri} className="rounded-xl bg-white p-4 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
+                        <div className="mb-2 flex items-center justify-between">
+                          <span className="font-bold text-[#1a1a1a]">{ref.nome || `Refeição ${ri + 1}`}</span>
+                          {ref.horario != null && (
+                            <span className="text-[13px] text-[#888]">{String(ref.horario).padStart(2, '0')}h</span>
+                          )}
+                        </div>
+                        {(ref.opcoes || []).length === 0 ? (
+                          <p className="m-0 text-[13px] text-[#aaa]">Sem opções cadastradas.</p>
+                        ) : (
+                          ref.opcoes.map((op, oi) => (
+                            <div key={op.id || oi} className="mb-2 border-l-[3px] border-nutri-100 pl-3 last:mb-0">
+                              <div className="text-[13px] font-semibold text-[#555]">{op.nome || `Opção ${oi + 1}`}</div>
+                              <ul className="mt-1 list-disc pl-[18px] text-[13px] text-[#666]">
+                                {(op.alimentos || []).map((al, ai) => (
+                                  <li key={al.id || ai}>{al.nome}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-5 border-t border-nutri-100 pt-4 text-sm text-[#888]">
+                  Este plano ainda não tem refeições cadastradas.
+                </p>
+              )}
             </div>
           ) : (
             <EmptyState

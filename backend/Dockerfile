@@ -3,5 +3,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+# Gera o Prisma Client no build (precisa do schema, já copiado acima).
+RUN npx prisma generate
 EXPOSE 3001
-CMD ["sh", "-c", "until node src/db/migrations/005_run_migrations.js; do echo 'Aguardando banco...'; sleep 2; done && npm run dev"]
+# Sincroniza o schema com o banco, cria o admin inicial (idempotente) e sobe a API.
+# O docker-compose só inicia este serviço quando o Postgres está healthy.
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node prisma/seed.js && node src/server.js"]

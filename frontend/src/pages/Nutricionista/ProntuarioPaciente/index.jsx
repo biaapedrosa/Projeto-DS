@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import pacienteService from '../../../services/pacienteService';
+import fichaMedicaService from '../../../services/fichaMedicaService';
 import ModalNovoPlano from '../../../components/ModalNovoPlano';
 import { ArrowLeft } from 'lucide-react';
 
@@ -9,6 +10,7 @@ export default function ProntuarioPaciente() {
   const navigate = useNavigate();
   const [paciente, setPaciente] = useState(null);
   const [planos, setPlanos] = useState([]);
+  const [fichas, setFichas] = useState([]);
   const [aba, setAba] = useState('plano');
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
@@ -22,12 +24,14 @@ export default function ProntuarioPaciente() {
   useEffect(() => {
     const fetchDados = async () => {
       try {
-        const [dadosPaciente, dadosPlanos] = await Promise.all([
+        const [dadosPaciente, dadosPlanos, dadosFichas] = await Promise.all([
           pacienteService.getById(id),
           pacienteService.getPlanos(id),
+          fichaMedicaService.getByPaciente(id).catch(() => []),
         ]);
         setPaciente(dadosPaciente);
         setPlanos(dadosPlanos);
+        setFichas(dadosFichas || []);
       } catch (err) {
         setErro('Erro ao carregar o prontuário do paciente.');
       } finally {
@@ -60,6 +64,7 @@ export default function ProntuarioPaciente() {
       <div className="mb-6 flex gap-2 border-b border-[#e0e0e0] pb-3">
         <button className={abaClass(aba === 'anamnese')} onClick={() => setAba('anamnese')}>Anamnese</button>
         <button className={abaClass(aba === 'avaliacao')} onClick={() => setAba('avaliacao')}>Avaliação Antropométrica</button>
+        <button className={abaClass(aba === 'fichas')} onClick={() => setAba('fichas')}>Fichas Médicas</button>
         <button className={abaClass(aba === 'plano')} onClick={() => setAba('plano')}>Plano Alimentar</button>
       </div>
 
@@ -79,6 +84,41 @@ export default function ProntuarioPaciente() {
           <p className="mt-2 text-[#888]">
             Medidas antropométricas (peso, altura, etc.) dependem de campos ainda não disponíveis no model do paciente.
           </p>
+        </div>
+      )}
+
+      {aba === 'fichas' && (
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="m-0 text-[#555]">Fichas médicas</h3>
+            <button
+              onClick={() => navigate(`/nutricionista/paciente/${id}/ficha-medica`)}
+              className="cursor-pointer rounded-lg border-0 bg-nutri px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              + Nova Ficha
+            </button>
+          </div>
+
+          {fichas.length === 0 ? (
+            <p className="text-[#888]">Nenhuma ficha médica registrada para este paciente.</p>
+          ) : (
+            <div className="grid gap-3">
+              {fichas.map((ficha) => (
+                <div
+                  key={ficha.id}
+                  onClick={() => navigate(`/nutricionista/paciente/${id}/ficha/${ficha.id}`)}
+                  className="cursor-pointer rounded-xl border border-[#e0e0e0] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(26,58,42,0.12)]"
+                >
+                  <div className="font-bold text-[#1a1a1a]">
+                    Ficha de {new Date(ficha.data_consulta).toLocaleDateString('pt-BR')}
+                  </div>
+                  <div className="mt-1 text-[13px] text-[#888]">
+                    {ficha.objetivo_historia || 'Sem objetivo registrado'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import fichaMedicaService from '../../services/fichaMedicaService';
 
@@ -17,12 +18,15 @@ const cardStyle = {
 
 export default function FichaMedica() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  // Quando aberta a partir do prontuário, o id do paciente vem na URL e fica travado.
+  const { id: pacienteIdParam } = useParams();
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
   const [salvando, setSalvando] = useState(false);
 
   const [form, setForm] = useState({
-    paciente_id: '', data_consulta: '', objetivo_historia: '',
+    paciente_id: pacienteIdParam || '', data_consulta: '', objetivo_historia: '',
     // Antropometria
     pa: '', altura: '', imc: '', pp: '', exame_fisico: '',
     // História clínica
@@ -81,6 +85,10 @@ export default function FichaMedica() {
       };
       await fichaMedicaService.create(payload);
       setSucesso('Ficha médica salva com sucesso!');
+      // Se veio do prontuário, volta para a aba de fichas após salvar.
+      if (pacienteIdParam) {
+        setTimeout(() => navigate(`/nutricionista/paciente/${pacienteIdParam}`), 900);
+      }
     } catch (err) {
       setErro(err.response?.data?.error || 'Erro ao salvar a ficha médica.');
     } finally {
@@ -91,6 +99,14 @@ export default function FichaMedica() {
   return (
     <div style={{ minHeight: '100vh', background: '#f5f7f5', fontFamily: "'Segoe UI', sans-serif" }}>
       <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
+        {pacienteIdParam && (
+          <button
+            onClick={() => navigate(`/nutricionista/paciente/${pacienteIdParam}`)}
+            style={{ marginBottom: '16px', cursor: 'pointer', border: 0, background: 'transparent', color: '#2d7a4f', fontSize: '14px' }}
+          >
+            ← Voltar ao prontuário
+          </button>
+        )}
         <h2 style={{ margin: '0 0 8px', color: '#1a1a1a' }}>Ficha Médica</h2>
         <p style={{ marginTop: 0, color: '#888' }}>Dados da consulta e anamnese do paciente.</p>
 
@@ -103,7 +119,7 @@ export default function FichaMedica() {
             <h3 style={{ marginTop: 0 }}>Identificação</h3>
             <div style={{ marginBottom: '14px' }}>
               <label style={labelStyle}>ID do paciente</label>
-              <input style={inputStyle} type="number" name="paciente_id" value={form.paciente_id} onChange={handleChange} required />
+              <input style={{ ...inputStyle, ...(pacienteIdParam ? { background: '#f0f0f0', color: '#888' } : {}) }} type="number" name="paciente_id" value={form.paciente_id} onChange={handleChange} required readOnly={!!pacienteIdParam} />
             </div>
             <div style={{ marginBottom: '14px' }}>
               <label style={labelStyle}>Data da consulta</label>

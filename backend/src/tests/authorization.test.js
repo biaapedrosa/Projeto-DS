@@ -27,11 +27,13 @@ describe('Autenticação (middleware auth)', () => {
     expect(res.body.error).toBe('Token inválido!');
   });
 
-  it('aceita token válido em rota apenas autenticada (200)', async () => {
+  it('aceita token válido (passa pelo middleware auth, não retorna 401)', async () => {
+    // Token válido deve passar pela autenticação. O 403 por perfil é checado
+    // adiante; aqui só garantimos que o middleware aceitou o token.
     const res = await request(app)
       .get('/api/nutricionistas')
       .set('Authorization', bearer(tokenPaciente));
-    expect(res.status).toBe(200);
+    expect(res.status).not.toBe(401);
   });
 });
 
@@ -142,6 +144,21 @@ describe('Autorização por perfil — /api/nutricionistas', () => {
   it('listar exige autenticação (401 sem token)', async () => {
     const res = await request(app).get('/api/nutricionistas');
     expect(res.status).toBe(401);
+  });
+
+  it('paciente não pode listar nutricionistas → 403', async () => {
+    const res = await request(app)
+      .get('/api/nutricionistas')
+      .set('Authorization', bearer(tokenPaciente));
+    expect(res.status).toBe(403);
+  });
+
+  it('nutricionista pode listar nutricionistas → 200 (sem expor senha)', async () => {
+    const res = await request(app)
+      .get('/api/nutricionistas')
+      .set('Authorization', bearer(tokenNutri));
+    expect(res.status).toBe(200);
+    res.body.forEach((n) => expect(n.senha).toBeUndefined());
   });
 
   it('nutricionista comum não pode cadastrar nutricionista → 403', async () => {

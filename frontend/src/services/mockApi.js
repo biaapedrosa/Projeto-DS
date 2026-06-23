@@ -61,6 +61,19 @@ export const demoNutricionistas = [
   { id: 301, nome: 'Admin Geral', email: 'admin@teste.com', crn: 'CRN-6 0001', telefone: '(81) 98888-0002', role: 'admin' },
 ];
 
+// Consultas / fichas médicas em memória, para a demo sem backend.
+export const demoConsultas = [
+  {
+    id: 1, paciente_id: 101, nutricionista_id: 201, data_consulta: '2026-06-10',
+    objetivo_historia: 'Emagrecimento e melhora do sono.',
+    antropometria: { pa: '120x80', altura: 1.65, imc: 24.2, pp: 66, exame_fisico: 'Sem alterações.' },
+    historia_clinica: { hist_familiar_dm: true, hist_familiar_has: false, hist_familiar_dvc: false, hist_familiar_cancer: false, hist_familiar_outras: '', tem_diagnostico: false, diagnosticos: '' },
+    estilo_vida: { bebida_alcoolica: 'Uma_vez_mes', fuma: 'Nunca', atividade_fisica: 'Caminhada 3x/semana', horas_sono: 6, fez_dieta_antes: true },
+    funcao_intestinal: { habito_intestinal: 'Diario', agua_dia: 1.5, cor_urina: 'Clara', alergia_intolerancia: 'Lactose', suplementos_medicamentos: 'Vitamina D' },
+    paciente: { id: 101, nome: 'Maria Silva' },
+  },
+];
+
 export function resolveMock(config) {
   const method = (config.method || 'get').toLowerCase();
   const url = (config.url || '').split('?')[0];
@@ -91,10 +104,33 @@ export function resolveMock(config) {
     if (method === 'delete') return { ok: true };
   }
 
-  // NUTRICIONISTAS 
+  // NUTRICIONISTAS
   if (url === '/api/nutricionistas' && method === 'get') return demoNutricionistas;
   if (url === '/api/nutricionistas' && method === 'post') return { ...body, id: Date.now() };
   if ((m = url.match(/^\/api\/nutricionistas\/([^/]+)$/)) && method === 'delete') return { ok: true };
+
+  // CONSULTAS / FICHAS MÉDICAS
+  if (url === '/api/consultas' && method === 'post') {
+    const nova = {
+      id: Date.now(),
+      paciente_id: Number(body.paciente_id),
+      data_consulta: body.data_consulta,
+      objetivo_historia: body.objetivo_historia,
+      antropometria: body.antropometria || null,
+      historia_clinica: body.historia_clinica || null,
+      estilo_vida: body.estilo_vida || null,
+      funcao_intestinal: body.funcao_intestinal || null,
+      paciente: demoPacientes.find((p) => String(p.id) === String(body.paciente_id)) || null,
+    };
+    demoConsultas.unshift(nova);
+    return nova;
+  }
+  if ((m = url.match(/^\/api\/consultas\/paciente\/([^/]+)$/)) && method === 'get') {
+    return demoConsultas.filter((c) => String(c.paciente_id) === m[1]);
+  }
+  if ((m = url.match(/^\/api\/consultas\/([^/]+)$/)) && method === 'get') {
+    return demoConsultas.find((c) => String(c.id) === m[1]) || demoConsultas[0];
+  }
 
   return undefined;
 }

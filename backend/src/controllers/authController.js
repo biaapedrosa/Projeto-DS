@@ -1,4 +1,5 @@
 const authService = require('../services/authService');
+const { traduzErro } = require('../utils/erros');
 
 // Etapa 2 do cadastro do paciente: ativa conta com CPF, e-mail e senha
 const ativarConta = async (req, res) => {
@@ -6,7 +7,7 @@ const ativarConta = async (req, res) => {
     const resultado = await authService.ativarConta(req.body);
     res.status(200).json({ message: 'Conta ativada com sucesso!', ...resultado });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: traduzErro(err) });
   }
 };
 
@@ -15,7 +16,7 @@ const login = async (req, res) => {
     const resultado = await authService.login(req.body);
     res.status(200).json(resultado);
   } catch (err) {
-    res.status(401).json({ error: err.message });
+    res.status(401).json({ error: traduzErro(err) });
   }
 };
 
@@ -28,7 +29,7 @@ const socialLogin = async (req, res) => {
     const resultado = await authService.socialLogin(req.body);
     res.status(200).json(resultado);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: traduzErro(err) });
   }
 };
 
