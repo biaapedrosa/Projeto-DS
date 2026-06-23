@@ -49,7 +49,6 @@ export default function FichaMedica() {
     try {
       const payload = {
         paciente_id: Number(form.paciente_id),
-        nutricionista_id: user?.id,
         data_consulta: form.data_consulta,
         objetivo_historia: form.objetivo_historia,
         antropometria: {
