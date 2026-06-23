@@ -1,5 +1,6 @@
 import { createContext, useState, useContext } from 'react';
 import authService from '../services/authService';
+import { makeDemoToken } from '../services/mockApi';
 
 const AuthContext = createContext();
 
@@ -18,6 +19,17 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  // Login de demonstração - ser substituído quando for feita a integração
+  const loginDemo = (tipo = 'paciente') => {
+    const token = makeDemoToken(tipo);
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const data = { token, ...payload };
+    localStorage.setItem('token', token);
+    localStorage.setItem('nutriflow:user', JSON.stringify(data));
+    setUser(data);
+    return data;
+  };
+
   const logout = () => {
     authService.logout();
     setUser(null);
@@ -25,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, showLoginModal, setShowLoginModal }}>
+    <AuthContext.Provider value={{ user, login, loginDemo, logout, showLoginModal, setShowLoginModal }}>
       {children}
     </AuthContext.Provider>
   );
