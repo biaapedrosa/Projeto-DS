@@ -1,9 +1,18 @@
 const pacienteService = require('../services/pacienteService');
 
-const create = async (req, res) => {
+// Garante que um paciente só acesse a própria ficha.
+// Nutricionista e admin podem acessar qualquer paciente.
+const podeAcessar = (req) => {
+  const { tipo, role, id } = req.user;
+  if (tipo === 'nutricionista' || role === 'nutricionista' || role === 'admin') return true;
+  return Number(id) === Number(req.params.id);
+};
+
+// POST /api/pacientes/precadastro — nutricionista cadastra dados básicos do paciente
+const preCadastrar = async (req, res) => {
   try {
-    const paciente = await pacienteService.create(req.body);
-    res.status(201).json(paciente);
+    const paciente = await pacienteService.preCadastrar(req.body);
+    res.status(201).json({ message: 'Paciente pré-cadastrado com sucesso!', paciente });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -11,6 +20,7 @@ const create = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
+    if (!podeAcessar(req)) return res.status(403).json({ error: 'Acesso não autorizado a este paciente!' });
     const paciente = await pacienteService.getById(req.params.id);
     res.status(200).json(paciente);
   } catch (err) {
@@ -20,6 +30,7 @@ const getById = async (req, res) => {
 
 const update = async (req, res) => {
   try {
+    if (!podeAcessar(req)) return res.status(403).json({ error: 'Acesso não autorizado a este paciente!' });
     const paciente = await pacienteService.update(req.params.id, req.body);
     res.status(200).json(paciente);
   } catch (err) {
@@ -29,12 +40,14 @@ const update = async (req, res) => {
 
 const getPlanos = async (req, res) => {
   try {
+    if (!podeAcessar(req)) return res.status(403).json({ error: 'Acesso não autorizado a este paciente!' });
     const planos = await pacienteService.getPlanos(req.params.id);
     res.status(200).json(planos);
   } catch (err) {
     res.status(404).json({ error: err.message });
   }
 };
+
 const getAll = async (req, res) => {
   try {
     const pacientes = await pacienteService.getAll();
@@ -42,7 +55,8 @@ const getAll = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
+
 const remove = async (req, res) => {
   try {
     await pacienteService.remove(req.params.id);
@@ -50,6 +64,6 @@ const remove = async (req, res) => {
   } catch (err) {
     res.status(404).json({ error: err.message });
   }
-}
+};
 
-module.exports = { create, getById, update, getPlanos, getAll, remove };
+module.exports = { preCadastrar, getById, update, getPlanos, getAll, remove };

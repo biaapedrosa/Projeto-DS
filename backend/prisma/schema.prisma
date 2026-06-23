@@ -51,6 +51,12 @@ enum RoleNutricionista {
   admin
 }
 
+enum TipoPaciente {
+  Adulto_Idoso
+  Gestante
+  Desportista
+}
+
 // ==================== MODELS ====================
 
 model Nutricionista {
@@ -72,8 +78,12 @@ model Nutricionista {
 model Paciente {
   id                Int             @id @default(autoincrement())
   nome              String          @db.VarChar(255)
+  cpf               String?         @unique @db.VarChar(11)
   email             String?         @unique @db.VarChar(255)
-  senha             String          @db.VarChar(255)
+  senha             String?         @db.VarChar(255)
+  cartao_sus        String?         @db.VarChar(20)
+  conta_ativada     Boolean         @default(false)
+  tipo_paciente     TipoPaciente    @default(Adulto_Idoso)
   sexo              Sexo?
   data_nascimento   DateTime?       @db.Date
   idade             Int?
@@ -172,6 +182,7 @@ model Consulta {
   estilo_vida       EstiloVida?
   funcao_intestinal FuncaoIntestinalUrinaria?
   exames            ExameBioquimico[]
+  dados_gestante    DadosGestante?
 
   @@map("consulta")
 }
@@ -233,9 +244,26 @@ model EstiloVida {
   horas_sono        Float?
   horario_mais_fome String?           @db.VarChar(10)
   fez_dieta_antes   Boolean?
+  complemento       EstiloVidaComplemento?
   consulta          Consulta          @relation(fields: [consulta_id], references: [id])
 
   @@map("estilo_vida")
+}
+
+model EstiloVidaComplemento {
+  id                 Int        @id @default(autoincrement())
+  estilo_vida_id     Int        @unique
+  atividade_fisica_2 String?
+  ativ2_horario      String?    @db.VarChar(100)
+  ativ2_frequencia   String?    @db.VarChar(100)
+  ativ2_tempo        String?    @db.VarChar(100)
+  qtd_refeicoes_dia  Int?
+  local_refeicoes    String?    @db.VarChar(255)
+  quem_prepara       String?    @db.VarChar(255)
+  dificuldade_dieta  String?
+  estilo_vida        EstiloVida @relation(fields: [estilo_vida_id], references: [id])
+
+  @@map("estilo_vida_complemento")
 }
 
 model FuncaoIntestinalUrinaria {
@@ -284,6 +312,19 @@ model ExameBioquimico {
   consulta    Consulta  @relation(fields: [consulta_id], references: [id])
 
   @@map("exame_bioquimico")
+}
+
+model DadosGestante {
+  id                   Int       @id @default(autoincrement())
+  consulta_id          Int       @unique
+  peso_pre_gestacional Float?
+  imc_pre_gestacional  Float?
+  dum                  DateTime? @db.Date
+  id_gestacional_atual String?   @db.VarChar(20)
+  ganho_peso           Float?
+  consulta             Consulta  @relation(fields: [consulta_id], references: [id])
+
+  @@map("dados_gestante")
 }
 
 // ==================== NOTÍCIAS ====================

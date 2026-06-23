@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import api from '../../services/api';
-import { Leaf, CheckCircle2, User, Stethoscope, ShieldCheck } from 'lucide-react';
+import { Leaf, User, Stethoscope, ShieldCheck } from 'lucide-react';
 
 const Login = () => {
   const { loginWithRedirect, user, isAuthenticated } = useAuth0();
-  const { login, loginDemo } = useAuth();
+  const { login, loginSocial, ativarConta, loginDemo } = useAuth();
   const navigate = useNavigate();
 
   const irPorTipo = (data) => {
@@ -19,17 +18,15 @@ const Login = () => {
   const entrarDemo = (tipo) => irPorTipo(loginDemo(tipo));
   const [searchParams] = useSearchParams();
   const [modo, setModo] = useState('login');
-  const [form, setForm] = useState({ nome: '', email: '', senha: '' });
+  // 'cadastro' = etapa 2 do paciente (ativar conta): cpf + email + senha.
+  const [form, setForm] = useState({ cpf: '', email: '', senha: '' });
   const [erro, setErro] = useState('');
-  const [modalAberto, setModalAberto] = useState(false);
 
+  // Login social (Google). Passa pelo contexto, que persiste token e usuário.
   useEffect(() => {
     if (isAuthenticated && user) {
-      api.post('/api/auth/social-login', { nome: user.name, email: user.email })
-        .then(({ data }) => {
-          login(data);
-          navigate('/dashboard');
-        })
+      loginSocial({ nome: user.name, email: user.email })
+        .then(irPorTipo)
         .catch(() => setErro('Erro ao autenticar com Google.'));
     }
   }, [isAuthenticated, user]);
@@ -48,34 +45,21 @@ const Login = () => {
     e.preventDefault();
     setErro('');
     try {
-      const data = await login(form);
-      if (data.tipo === 'nutricionista' && data.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else if (data.tipo === 'nutricionista') {
-        navigate('/nutricionista/dashboard');
-      } else {
-        navigate('/paciente/dashboard');
-      }
+      irPorTipo(await login({ email: form.email, senha: form.senha }));
     } catch (err) {
       setErro('Email ou senha inválidos!');
     }
   };
 
-  const handleCadastro = async (e) => {
+  // Ativa a conta do paciente (que já foi pré-cadastrado pelo nutricionista).
+  const handleAtivar = async (e) => {
     e.preventDefault();
     setErro('');
     try {
-      await api.post('/api/auth/register', form);
-      setModalAberto(true);
+      irPorTipo(await ativarConta(form));
     } catch (err) {
-      setErro(err.response?.data?.error || 'Erro ao cadastrar.');
+      setErro(err.response?.data?.error || 'Erro ao ativar a conta.');
     }
-  };
-
-  const handleFecharModal = () => {
-    setModalAberto(false);
-    setModo('login');
-    setForm({ nome: '', email: '', senha: '' });
   };
 
   const inputClass = 'box-border w-full rounded-lg border border-[#e0e0e0] px-4 py-3 text-sm outline-none transition-shadow focus:border-nutri-light focus:ring-2 focus:ring-nutri-light/20';
@@ -91,10 +75,12 @@ const Login = () => {
             <span className="text-[22px] font-bold text-[#1a1a1a]">Clínica de Nutrição</span>
           </div>
           <h2 className="mb-1 text-xl font-bold text-[#1a1a1a]">
-            {modo === 'login' ? 'Bem-vindo de volta' : 'Criar conta'}
+            {modo === 'login' ? 'Bem-vindo de volta' : 'Ativar conta'}
           </h2>
           <p className="text-sm text-[#888]">
-            {modo === 'login' ? 'Entre com suas credenciais' : 'Preencha seus dados para se cadastrar'}
+            {modo === 'login'
+              ? 'Entre com suas credenciais'
+              : 'Use o CPF do seu pré-cadastro e crie sua senha'}
           </p>
         </div>
 
@@ -104,17 +90,17 @@ const Login = () => {
           </div>
         )}
 
-        <form onSubmit={modo === 'login' ? handleLogin : handleCadastro}>
+        <form onSubmit={modo === 'login' ? handleLogin : handleAtivar}>
           {modo === 'cadastro' && (
             <div className="mb-4">
-              <label className={labelClass}>Nome</label>
+              <label className={labelClass}>CPF</label>
               <input
                 type="text"
-                name="nome"
-                value={form.nome}
+                name="cpf"
+                value={form.cpf}
                 onChange={handleChange}
                 required
-                placeholder="Seu nome completo"
+                placeholder="Somente números"
                 className={inputClass}
               />
             </div>
@@ -150,7 +136,7 @@ const Login = () => {
             type="submit"
             className="w-full cursor-pointer rounded-lg border-0 bg-[#2d7a4f] py-3.5 text-base font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
           >
-            {modo === 'login' ? 'Entrar' : 'Cadastrar'}
+            {modo === 'login' ? 'Entrar' : 'Ativar conta'}
           </button>
         </form>
 
@@ -172,9 +158,9 @@ const Login = () => {
         )}
 
         <p className="mt-4 text-center text-sm text-[#555]">
-          {modo === 'login' ? 'Não tem conta?' : 'Já tem conta?'}{' '}
+          {modo === 'login' ? 'Já tem pré-cadastro e ainda não ativou?' : 'Já tem conta ativa?'}{' '}
           <span onClick={() => { setModo(modo === 'login' ? 'cadastro' : 'login'); setErro(''); }} className="cursor-pointer font-semibold text-[#2d7a4f]">
-            {modo === 'login' ? 'Cadastre-se' : 'Entrar'}
+            {modo === 'login' ? 'Ative aqui' : 'Entrar'}
           </span>
         </p>
 
@@ -203,21 +189,6 @@ const Login = () => {
           </div>
         )}
       </div>
-
-      {modalAberto && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50">
-          <div className="w-[90%] max-w-[400px] rounded-2xl bg-white p-10 px-10 py-12 text-center shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
-            <div className="mb-4 flex justify-center">
-              <CheckCircle2 size={56} color="#4CAF7D" />
-            </div>
-            <h2 className="mb-2 text-[#2d7a4f]">Cadastro realizado!</h2>
-            <p className="mb-6 text-[#555]">Sua conta foi criada com sucesso. Faça login para acessar a plataforma.</p>
-            <button onClick={handleFecharModal} className="cursor-pointer rounded-lg border-0 bg-[#2d7a4f] px-8 py-3 text-base font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg">
-              Fazer login
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

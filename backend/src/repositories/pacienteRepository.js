@@ -3,22 +3,33 @@ const prisma = require('../db');
 const findByEmail = (email) =>
   prisma.paciente.findUnique({ where: { email } });
 
-const create = ({ nome, email, senha, sexo, data_nascimento, idade, telefone_whatsapp, ocupacao, vinculo_ufpe, objetivo }) =>
-  prisma.paciente.create({
-    data: {
-      nome, email, senha,
-      sexo: sexo || null,
-      data_nascimento: data_nascimento || null,
-      idade: idade ? Number(idade) : null,
-      telefone_whatsapp: telefone_whatsapp || null,
-      ocupacao: ocupacao || null,
-      vinculo_ufpe: vinculo_ufpe || null,
-      objetivo: objetivo || null,
-    },
-  });
+const findByCpf = (cpf) =>
+  prisma.paciente.findUnique({ where: { cpf } });
 
 const findById = (id) =>
   prisma.paciente.findUnique({ where: { id: Number(id) } });
+
+// Pré-cadastro feito pelo nutricionista (sem senha, conta_ativada = false)
+const preCadastrar = ({ nome, cpf, data_nascimento, cartao_sus, email, telefone_whatsapp }) =>
+  prisma.paciente.create({
+    data: {
+      nome,
+      cpf,
+      cartao_sus: cartao_sus || null,
+      email: email || null,
+      telefone_whatsapp: telefone_whatsapp || null,
+      data_nascimento: data_nascimento ? new Date(data_nascimento) : null,
+      senha: null,
+      conta_ativada: false,
+    },
+  });
+
+// Ativação pelo próprio paciente: define email, senha e ativa conta
+const ativarConta = (id, { email, senha }) =>
+  prisma.paciente.update({
+    where: { id: Number(id) },
+    data: { email, senha, conta_ativada: true },
+  });
 
 const update = (id, dados) =>
   prisma.paciente.update({ where: { id: Number(id) }, data: dados });
@@ -29,4 +40,5 @@ const findAll = () =>
 const remove = (id) =>
   prisma.paciente.delete({ where: { id: Number(id) } });
 
-module.exports = { findByEmail, create, findById, update, findAll, remove };
+module.exports = { findByEmail, findByCpf, findById, preCadastrar, ativarConta, update, findAll, remove };
+

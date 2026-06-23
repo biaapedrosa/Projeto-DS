@@ -11,9 +11,9 @@ const getById = async (id) => {
 const create = async (dados) => await noticiaRepository.create(dados);
 
 const update = async (id, dados) => {
-  const noticia = await noticiaRepository.update(id, dados);
+  const noticia = await noticiaRepository.findById(id);
   if (!noticia) throw new Error('Notícia não encontrada!');
-  return noticia;
+  return noticiaRepository.update(id, dados);
 };
 const remove = async (id) => {
   const noticia = await noticiaRepository.findById(id);
