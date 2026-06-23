@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const consultaRoutes = require('./routes/consultaRoutes');
 
 const authRoutes = require('./routes/authRoutes');
 const pacienteRoutes = require('./routes/pacienteRoutes');
@@ -22,6 +23,7 @@ app.use('/api/noticias', noticiaRoutes);
 app.use('/api/nutricionistas', nutricionistaRoutes);
 app.use('/api/consultas', consultaRoutes);
 app.use('/api/paciente', pacienteDashboardRoutes);
+app.use('/api/consultas', consultaRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'API Clínica de Nutrição funcionando!' });

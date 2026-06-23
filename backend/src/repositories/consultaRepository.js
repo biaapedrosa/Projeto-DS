@@ -1,98 +1,90 @@
 const prisma = require('../db');
 
-const create = (data) =>
-  prisma.consulta.create({ data });
+const consultaInclude = {
+  antropometria: true,
+  historia_clinica: true,
+  estilo_vida: true,
+  funcao_intestinal: true,
+  exames: true,
+};
+
+const buildOneToOneCreate = (obj) => {
+  if (!obj || typeof obj !== 'object') return undefined;
+  return { create: obj };
+};
+
+const buildExamesCreate = (exames) => {
+  if (!Array.isArray(exames) || exames.length === 0) return undefined;
+  return {
+    create: exames.map((exame) => ({
+      ...exame,
+      data_exame: exame.data_exame ? new Date(exame.data_exame) : null,
+    })),
+  };
+};
 
 const findById = (id) =>
   prisma.consulta.findUnique({
     where: { id: Number(id) },
-    include: {
-      antropometria: true,
-      historia_clinica: true,
-      estilo_vida: { include: { complemento: true } },
-      funcao_intestinal: true,
-      exames: true,
-      dados_gestante: true,
-      paciente: { select: { id: true, nome: true, tipo_paciente: true, data_nascimento: true } },
-      nutricionista: { select: { id: true, nome: true } },
-    },
+    include: consultaInclude,
   });
 
 const findByPacienteId = (paciente_id) =>
   prisma.consulta.findMany({
     where: { paciente_id: Number(paciente_id) },
+    include: consultaInclude,
     orderBy: { data_consulta: 'desc' },
-    include: {
-      antropometria: true,
-      historia_clinica: true,
-      estilo_vida: { include: { complemento: true } },
-      funcao_intestinal: true,
-      exames: true,
-      dados_gestante: true,
-    },
   });
 
-// Antropometria
-const createAntropometria = (data) =>
-  prisma.antropometria.create({ data });
+const create = ({
+  paciente_id,
+  nutricionista_id,
+  data_consulta,
+  objetivo_historia,
+  antropometria,
+  historia_clinica,
+  estilo_vida,
+  funcao_intestinal,
+  exames,
+}) =>
+  prisma.consulta.create({
+    data: {
+      paciente_id: Number(paciente_id),
+      nutricionista_id: Number(nutricionista_id),
+      data_consulta: new Date(data_consulta),
+      objetivo_historia: objetivo_historia ?? null,
+      antropometria: buildOneToOneCreate(antropometria),
+      historia_clinica: buildOneToOneCreate(historia_clinica),
+      estilo_vida: buildOneToOneCreate(estilo_vida),
+      funcao_intestinal: buildOneToOneCreate(funcao_intestinal),
+      exames: buildExamesCreate(exames),
+    },
+    include: consultaInclude,
+  });
 
-const updateAntropometria = (consulta_id, data) =>
-  prisma.antropometria.update({ where: { consulta_id: Number(consulta_id) }, data });
+const update = (id, dados) => {
+  const data = {};
+  if (dados.data_consulta !== undefined) data.data_consulta = new Date(dados.data_consulta);
+  if (dados.objetivo_historia !== undefined) data.objetivo_historia = dados.objetivo_historia;
+  if (dados.paciente_id !== undefined) data.paciente_id = Number(dados.paciente_id);
+  if (dados.nutricionista_id !== undefined) data.nutricionista_id = Number(dados.nutricionista_id);
 
-// História Clínica
-const createHistoriaClinica = (data) =>
-  prisma.historiaClinica.create({ data });
-
-const updateHistoriaClinica = (consulta_id, data) =>
-  prisma.historiaClinica.update({ where: { consulta_id: Number(consulta_id) }, data });
-
-// Estilo de Vida
-const createEstiloVida = (data) =>
-  prisma.estiloVida.create({ data });
-
-const updateEstiloVida = (consulta_id, data) =>
-  prisma.estiloVida.update({ where: { consulta_id: Number(consulta_id) }, data });
-
-// Estilo de Vida Complemento
-const createEstiloVidaComplemento = (data) =>
-  prisma.estiloVidaComplemento.create({ data });
-
-const updateEstiloVidaComplemento = (estilo_vida_id, data) =>
-  prisma.estiloVidaComplemento.update({ where: { estilo_vida_id: Number(estilo_vida_id) }, data });
-
-// Função Intestinal
-const createFuncaoIntestinal = (data) =>
-  prisma.funcaoIntestinalUrinaria.create({ data });
-
-const updateFuncaoIntestinal = (consulta_id, data) =>
-  prisma.funcaoIntestinalUrinaria.update({ where: { consulta_id: Number(consulta_id) }, data });
-
-// Exames Bioquímicos
-const createExames = (exames) =>
-  prisma.exameBioquimico.createMany({ data: exames });
-
-// Dados Gestante
-const createDadosGestante = (data) =>
-  prisma.dadosGestante.create({ data });
-
-const updateDadosGestante = (consulta_id, data) =>
-  prisma.dadosGestante.update({ where: { consulta_id: Number(consulta_id) }, data });
-
-module.exports = {
-  create,
-  findById,
-  findByPacienteId,
-  createAntropometria,
-  updateAntropometria,
-  createHistoriaClinica,
-  updateHistoriaClinica,
-  createEstiloVida,
-  updateEstiloVida,
-  createEstiloVidaComplemento,
-  updateEstiloVidaComplemento,
-  createFuncaoIntestinal,
-  updateFuncaoIntestinal,
-  createExames,
-  createDadosGestante,
-  updateDadosGestante,
+  return prisma.consulta.update({
+    where: { id: Number(id) },
+    data,
+    include: consultaInclude,
+  });
 };
+
+const remove = (id) =>
+  prisma.$transaction(async (tx) => {
+    const consultaId = Number(id);
+    await tx.antropometria.deleteMany({ where: { consulta_id: consultaId } });
+    await tx.historiaClinica.deleteMany({ where: { consulta_id: consultaId } });
+    await tx.estiloVida.deleteMany({ where: { consulta_id: consultaId } });
+    await tx.funcaoIntestinalUrinaria.deleteMany({ where: { consulta_id: consultaId } });
+    await tx.exameBioquimico.deleteMany({ where: { consulta_id: consultaId } });
+    return tx.consulta.delete({ where: { id: consultaId } });
+  });
+
+module.exports = { findById, findByPacienteId, create, update, remove };

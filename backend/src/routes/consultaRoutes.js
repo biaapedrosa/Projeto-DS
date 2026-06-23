@@ -4,9 +4,10 @@ const consultaController = require('../controllers/consultaController');
 const auth = require('../middlewares/auth');
 const { authorize } = require('../middlewares/auth');
 
-// Apenas nutricionistas autenticados podem criar e visualizar consultas
-router.post('/', auth, authorize('nutricionista', 'admin'), consultaController.criar);
-router.get('/paciente/:paciente_id', auth, authorize('nutricionista', 'admin'), consultaController.listarPorPaciente);
-router.get('/:id', auth, authorize('nutricionista', 'admin'), consultaController.buscarPorId);
+router.get('/paciente/:pacienteId', auth, consultaController.getByPaciente);
+router.get('/:id', auth, consultaController.getById);
+router.post('/', auth, authorize('nutricionista', 'admin'), consultaController.create);
+router.put('/:id', auth, authorize('nutricionista', 'admin'), consultaController.update);
+router.delete('/:id', auth, authorize('nutricionista', 'admin'), consultaController.remove);
 
 module.exports = router;
