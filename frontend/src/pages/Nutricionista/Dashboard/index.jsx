@@ -4,26 +4,29 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../../services/api';
 import { UserPlus, ArrowLeft } from 'lucide-react';
 
+const formInicial = { nome: '', cpf: '', cartao_sus: '', email: '', telefone_whatsapp: '', data_nascimento: '' };
+
 export default function NutricionistaDashboard() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [tela, setTela] = useState(null);
-  const [form, setForm] = useState({ nome: '', email: '', senha: '', telefone_whatsapp: '', sexo: '', idade: '', ocupacao: '', objetivo: '' });
+  const [form, setForm] = useState(formInicial);
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
 
   const handleLogout = () => { logout(); navigate('/login'); };
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Pré-cadastro (etapa 1). O paciente recebe o CPF e depois ativa a conta
+  // criando a senha. Por isso aqui não se coleta senha. O token de auth é
+  // anexado automaticamente pelo interceptor do axios (api.js).
   const handleCadastrarPaciente = async (e) => {
     e.preventDefault();
     setErro(''); setSucesso('');
     try {
-      await api.post('/api/pacientes', form, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      setSucesso('Paciente cadastrado com sucesso!');
-      setForm({ nome: '', email: '', senha: '', telefone_whatsapp: '', sexo: '', idade: '', ocupacao: '', objetivo: '' });
+      await api.post('/api/pacientes/precadastro', form);
+      setSucesso('Paciente pré-cadastrado! Ele já pode ativar a conta com o CPF.');
+      setForm(formInicial);
     } catch (err) {
       setErro(err.response?.data?.error || 'Erro ao cadastrar paciente.');
     }
@@ -51,6 +54,9 @@ export default function NutricionistaDashboard() {
                 <div className="mt-1 text-[13px] text-[#888]">Registrar novo paciente</div>
               </button>
             </div>
+            <button onClick={handleLogout} className="mt-6 cursor-pointer border-0 bg-transparent text-sm text-[#555] underline">
+              Sair
+            </button>
           </>
         )}
 
@@ -67,11 +73,11 @@ export default function NutricionistaDashboard() {
             <form onSubmit={handleCadastrarPaciente} className="flex flex-col gap-3.5">
               {[
                 { name: 'nome', label: 'Nome completo', type: 'text', required: true },
+                { name: 'cpf', label: 'CPF (somente números)', type: 'text', required: true },
                 { name: 'email', label: 'E-mail', type: 'email', required: true },
-                { name: 'senha', label: 'Senha', type: 'password', required: true },
+                { name: 'cartao_sus', label: 'Cartão SUS', type: 'text', required: false },
                 { name: 'telefone_whatsapp', label: 'Telefone / WhatsApp', type: 'text', required: false },
-                { name: 'ocupacao', label: 'Ocupação', type: 'text', required: false },
-                { name: 'idade', label: 'Idade', type: 'number', required: false },
+                { name: 'data_nascimento', label: 'Data de nascimento', type: 'date', required: false },
               ].map(({ name, label, type, required }) => (
                 <div key={name}>
                   <label className={labelClass}>{label}</label>
@@ -85,20 +91,6 @@ export default function NutricionistaDashboard() {
                   />
                 </div>
               ))}
-
-              <div>
-                <label className={labelClass}>Sexo</label>
-                <select name="sexo" value={form.sexo} onChange={handleChange} className={inputClass}>
-                  <option value="">Selecione</option>
-                  <option value="M">Masculino</option>
-                  <option value="F">Feminino</option>
-                </select>
-              </div>
-
-              <div>
-                <label className={labelClass}>Objetivo</label>
-                <textarea name="objetivo" value={form.objetivo} onChange={handleChange} rows={3} className={`${inputClass} resize-y`} />
-              </div>
 
               <button type="submit" className="mt-2 cursor-pointer rounded-lg border-0 bg-[#2d7a4f] py-3 text-[15px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg">
                 Cadastrar Paciente
