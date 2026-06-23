@@ -16,6 +16,7 @@ import AdminDashboard from './pages/Admin';
 import ListaPacientes from './pages/Nutricionista/ListaPacientes';
 import ProntuarioPaciente from './pages/Nutricionista/ProntuarioPaciente';
 import DetalhePlano from './pages/Nutricionista/DetalhePlano';
+import FichaMedica from './pages/FichaMedica/FichaMedica';
 
 // Layout padrão com NavBar e Footer
 function Layout({ children }) {
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/nutricionista/pacientes" element={<PrivateRoute><Layout><ListaPacientes /></Layout></PrivateRoute>} />
           <Route path="/nutricionista/paciente/:id" element={<PrivateRoute><Layout><ProntuarioPaciente /></Layout></PrivateRoute>} />
           <Route path="/nutricionista/paciente/:id/plano/:planoId" element={<PrivateRoute><Layout><DetalhePlano /></Layout></PrivateRoute>} />
+          <Route path="/ficha-medica" element={<PrivateRoute><Layout><FichaMedica /></Layout></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
