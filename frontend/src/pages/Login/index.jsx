@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Leaf, User, Stethoscope, ShieldCheck } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 
 const Login = () => {
   const { loginWithRedirect, user, isAuthenticated } = useAuth0();
-  const { login, loginSocial, ativarConta, loginDemo } = useAuth();
+  const { login, loginSocial, ativarConta } = useAuth();
   const navigate = useNavigate();
 
   const irPorTipo = (data) => {
@@ -15,7 +15,6 @@ const Login = () => {
     else navigate('/paciente/dashboard');
   };
 
-  const entrarDemo = (tipo) => irPorTipo(loginDemo(tipo));
   const [searchParams] = useSearchParams();
   const [modo, setModo] = useState('login');
   // 'cadastro' = etapa 2 do paciente (ativar conta): cpf + email + senha.
@@ -164,30 +163,6 @@ const Login = () => {
           </span>
         </p>
 
-        {modo === 'login' && (
-          <div className="mt-6 rounded-[10px] border border-[#e3efe7] bg-[#f5faf6] p-4">
-            <p className="mb-2.5 text-[13px] font-semibold text-nutri">
-              Modo demonstração — entre sem backend:
-            </p>
-            <div className="grid gap-2">
-              {[
-                { tipo: 'paciente', Icon: User, label: 'Entrar como Paciente' },
-                { tipo: 'nutricionista', Icon: Stethoscope, label: 'Entrar como Nutricionista' },
-                { tipo: 'admin', Icon: ShieldCheck, label: 'Entrar como Admin' },
-              ].map(({ tipo, Icon, label }) => (
-                <button
-                  key={tipo}
-                  type="button"
-                  onClick={() => entrarDemo(tipo)}
-                  className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[#d8e6dc] bg-white px-3.5 py-2.5 text-sm font-semibold text-[#1a3a2a] transition-all hover:-translate-y-0.5 hover:border-nutri-light hover:shadow-md"
-                >
-                  <Icon size={18} color="#4CAF7D" />
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

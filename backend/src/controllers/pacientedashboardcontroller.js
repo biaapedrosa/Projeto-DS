@@ -1,4 +1,5 @@
 const service = require('../services/pacienteDashboardService');
+const { traduzErro } = require('../utils/erros');
 
 // GET /api/paciente/home
 // Retorna dados do card da home: info do paciente + última consulta
@@ -8,8 +9,8 @@ const getHome = async (req, res) => {
     const dados = await service.getResumoHome(paciente_id);
     res.json(dados);
   } catch (err) {
-    const status = err.message.includes('não encontrado') ? 404 : 500;
-    res.status(status).json({ error: err.message });
+    const status = err.message?.includes('não encontrado') ? 404 : 500;
+    res.status(status).json({ error: traduzErro(err) });
   }
 };
 
@@ -21,8 +22,8 @@ const getPlanoVigente = async (req, res) => {
     const plano = await service.getPlanoVigente(paciente_id);
     res.json(plano);
   } catch (err) {
-    const status = err.message.includes('não encontrado') ? 404 : 500;
-    res.status(status).json({ error: err.message });
+    const status = err.message?.includes('não encontrado') ? 404 : 500;
+    res.status(status).json({ error: traduzErro(err) });
   }
 };
 
@@ -34,8 +35,8 @@ const getHistoricoPlanos = async (req, res) => {
     const planos = await service.getHistoricoPlanos(paciente_id);
     res.json(planos);
   } catch (err) {
-    const status = err.message.includes('não encontrado') ? 404 : 500;
-    res.status(status).json({ error: err.message });
+    const status = err.message?.includes('não encontrado') ? 404 : 500;
+    res.status(status).json({ error: traduzErro(err) });
   }
 };
 
@@ -48,8 +49,8 @@ const getPlanoById = async (req, res) => {
     const plano = await service.getPlanoById(plano_id, paciente_id);
     res.json(plano);
   } catch (err) {
-    const status = err.message.includes('não encontrado') ? 404 : 500;
-    res.status(status).json({ error: err.message });
+    const status = err.message?.includes('não encontrado') ? 404 : 500;
+    res.status(status).json({ error: traduzErro(err) });
   }
 };
 

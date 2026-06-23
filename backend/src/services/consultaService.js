@@ -1,3 +1,4 @@
+const prisma = require('../db');
 const consultaRepository = require('../repositories/consultaRepository');
 const pacienteRepository = require('../repositories/pacienteRepository');
 

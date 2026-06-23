@@ -8,6 +8,7 @@ const { authorize } = require('../middlewares/auth');
 router.post('/precadastro', auth, authorize('nutricionista', 'admin'), pacienteController.preCadastrar);
 
 // Listagem e gestão (restrito a nutricionista/admin)
+router.post('/', auth, authorize('nutricionista', 'admin'), pacienteController.criar);
 router.get('/', auth, authorize('nutricionista', 'admin'), pacienteController.getAll);
 router.delete('/:id', auth, authorize('nutricionista', 'admin'), pacienteController.remove);
 

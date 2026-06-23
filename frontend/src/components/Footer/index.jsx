@@ -26,7 +26,7 @@ const Footer = () => {
           <h4 className="mb-4 text-sm font-bold uppercase tracking-[0.08em] text-[#1a3a2a]">Links</h4>
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
             <li><Link to="/institucional" className="text-sm text-[#4a6a5a] no-underline transition-colors hover:text-nutri-light">Sobre</Link></li>
-            <li><Link to="/dashboard" className="text-sm text-[#4a6a5a] no-underline transition-colors hover:text-nutri-light">Área do Paciente</Link></li>
+            <li><Link to="/paciente/dashboard" className="text-sm text-[#4a6a5a] no-underline transition-colors hover:text-nutri-light">Área do Paciente</Link></li>
           </ul>
         </div>
 

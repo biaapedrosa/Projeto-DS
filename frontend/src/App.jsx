@@ -16,6 +16,8 @@ import AdminDashboard from './pages/Admin';
 import ListaPacientes from './pages/Nutricionista/ListaPacientes';
 import ProntuarioPaciente from './pages/Nutricionista/ProntuarioPaciente';
 import DetalhePlano from './pages/Nutricionista/DetalhePlano';
+import FichaMedica from './pages/FichaMedica/FichaMedica';
+import FichaMedicaDetalhe from './pages/FichaMedica/FichaMedicaDetalhe';
 
 // Layout padrão com NavBar e Footer
 function Layout({ children }) {
@@ -45,10 +47,13 @@ export default function App() {
           <Route path="/dashboard" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
           <Route path="/nutricionista/dashboard" element={<PrivateRoute perfil="nutricionista"><Layout><NutricionistaDashboard /></Layout></PrivateRoute>} />
           <Route path="/paciente/dashboard" element={<PrivateRoute perfil="paciente"><Layout><PacienteDashboard /></Layout></PrivateRoute>} />
-          <Route path="/admin/dashboard" element={<PrivateRoute><Layout><AdminDashboard /></Layout></PrivateRoute>} />
-          <Route path="/nutricionista/pacientes" element={<PrivateRoute><Layout><ListaPacientes /></Layout></PrivateRoute>} />
-          <Route path="/nutricionista/paciente/:id" element={<PrivateRoute><Layout><ProntuarioPaciente /></Layout></PrivateRoute>} />
-          <Route path="/nutricionista/paciente/:id/plano/:planoId" element={<PrivateRoute><Layout><DetalhePlano /></Layout></PrivateRoute>} />
+          <Route path="/admin/dashboard" element={<PrivateRoute perfil="nutricionista"><Layout><AdminDashboard /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/pacientes" element={<PrivateRoute perfil="nutricionista"><Layout><ListaPacientes /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/paciente/:id" element={<PrivateRoute perfil="nutricionista"><Layout><ProntuarioPaciente /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/paciente/:id/plano/:planoId" element={<PrivateRoute perfil="nutricionista"><Layout><DetalhePlano /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/paciente/:id/ficha-medica" element={<PrivateRoute perfil="nutricionista"><Layout><FichaMedica /></Layout></PrivateRoute>} />
+          <Route path="/nutricionista/paciente/:id/ficha/:consultaId" element={<PrivateRoute perfil="nutricionista"><Layout><FichaMedicaDetalhe /></Layout></PrivateRoute>} />
+          <Route path="/ficha-medica" element={<PrivateRoute perfil="nutricionista"><Layout><FichaMedica /></Layout></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

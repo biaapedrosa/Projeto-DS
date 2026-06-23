@@ -37,7 +37,7 @@ export default function ListaPacientes() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="m-0 text-nutri">Meus Pacientes</h2>
         <button
-          onClick={() => navigate('/nutricionista/cadastrar-paciente')}
+          onClick={() => navigate('/nutricionista/dashboard?acao=cadastrar')}
           className="cursor-pointer rounded-lg border-0 bg-nutri px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
         >
           + Cadastrar Paciente

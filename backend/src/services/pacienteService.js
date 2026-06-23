@@ -21,6 +21,36 @@ const preCadastrar = async ({ nome, cpf, data_nascimento, cartao_sus, email, tel
   return pacienteRepository.preCadastrar({ nome, cpf: cpfLimpo, data_nascimento, cartao_sus, email, telefone_whatsapp });
 };
 
+// Cadastro completo feito por admin/nutricionista (paciente já sai ativo,
+// com senha definida). Diferente do pré-cadastro, que não tem senha.
+const criar = async (dados) => {
+  const { nome, email, senha, telefone_whatsapp, ocupacao, objetivo, sexo, idade, cpf } = dados;
+  if (!nome || !email || !senha) throw new Error('Nome, e-mail e senha são obrigatórios.');
+
+  const existenteEmail = await pacienteRepository.findByEmail(email);
+  if (existenteEmail) throw new Error('E-mail já cadastrado.');
+
+  if (cpf) {
+    const cpfLimpo = String(cpf).replace(/\D/g, '');
+    const existenteCpf = await pacienteRepository.findByCpf(cpfLimpo);
+    if (existenteCpf) throw new Error('CPF já cadastrado.');
+  }
+
+  const senhaHash = await bcrypt.hash(senha, 10);
+  return pacienteRepository.criar({
+    nome,
+    email,
+    senha: senhaHash,
+    conta_ativada: true,
+    cpf: cpf ? String(cpf).replace(/\D/g, '') : null,
+    telefone_whatsapp: telefone_whatsapp || null,
+    ocupacao: ocupacao || null,
+    objetivo: objetivo || null,
+    sexo: sexo || null,
+    idade: idade !== undefined && idade !== '' && idade !== null ? Number(idade) : null,
+  });
+};
+
 const getById = async (id) => {
   const paciente = await pacienteRepository.findById(id);
   if (!paciente) throw new Error('Paciente não encontrado!');
@@ -47,4 +77,4 @@ const remove = async (id) => {
   await pacienteRepository.remove(id);
 };
 
-module.exports = { preCadastrar, getById, update, getPlanos, getAll, remove };
+module.exports = { criar, preCadastrar, getById, update, getPlanos, getAll, remove };
