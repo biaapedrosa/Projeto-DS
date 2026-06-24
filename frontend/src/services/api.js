@@ -1,14 +1,14 @@
-import axios from 'axios';
-import { resolveMock } from './mockApi';
+// Mock removido — todas as chamadas vão para o backend real.
+// Em desenvolvimento certifique-se de que VITE_API_URL está definido no .env,
+// ou que o backend está rodando em http://localhost:3001.
 
-// Em produção, defina VITE_API_URL com a URL do backend. Em dev, o padrão
-// http://localhost:3001 mantém o fallback de demo funcionando (quando o backend
-// está fora, o axios recebe erro de rede sem response e o interceptor abaixo
-// devolve dados simulados).
+import axios from 'axios';
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001',
 });
 
+// Anexa o token JWT em toda requisição autenticada
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -17,17 +17,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Trata erros globais de autenticação:
+// 401 → token expirado ou ausente → redireciona para login
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (!error.response && error.config) {
-      const data = resolveMock(error.config);
-      if (data !== undefined) {
-        if (import.meta?.env?.DEV) {
-          console.info(`[demo] ${error.config.method?.toUpperCase()} ${error.config.url} → resposta simulada`);
-        }
-        return Promise.resolve({ data, status: 200, statusText: 'OK (demo)', headers: {}, config: error.config });
-      }
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('nutriflow:user');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
