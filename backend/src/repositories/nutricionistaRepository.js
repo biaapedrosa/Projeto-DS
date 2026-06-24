@@ -28,6 +28,9 @@ const update = (id, dados) =>
     select: safeSelect,
   });
 
+const update = (id, dados) =>
+  prisma.nutricionista.update({ where: { id: Number(id) }, data: dados });
+
 const remove = (id) =>
   prisma.nutricionista.delete({ where: { id: Number(id) } });
 
