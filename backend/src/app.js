@@ -7,6 +7,9 @@ const pacienteRoutes = require('./routes/pacienteRoutes');
 const planoRoutes = require('./routes/planoRoutes');
 const noticiaRoutes = require('./routes/noticiaRoutes');
 const nutricionistaRoutes = require('./routes/nutricionistaRoutes');
+const consultaRoutes = require('./routes/consultaRoutes');
+const pacienteDashboardRoutes = require('./routes/pacientedashboardroutes');
+const alimentoTacoRoutes = require('./routes/alimentoTacoRoutes');
 
 const app = express();
 
@@ -18,6 +21,9 @@ app.use('/api/pacientes', pacienteRoutes);
 app.use('/api/planos', planoRoutes);
 app.use('/api/noticias', noticiaRoutes);
 app.use('/api/nutricionistas', nutricionistaRoutes);
+app.use('/api/consultas', consultaRoutes);
+app.use('/api/paciente', pacienteDashboardRoutes);
+app.use('/api/alimentos-taco', alimentoTacoRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: '✅ API Clínica de Nutrição funcionando!' });

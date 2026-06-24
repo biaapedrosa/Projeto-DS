@@ -15,4 +15,14 @@ const create = async (dados) => {
   return response.data;
 };
 
-export default { getById, getByPaciente, create };
+const update = async (id, dados) => {
+  const response = await api.put(`/api/planos/${id}`, dados);
+  return response.data;
+};
+
+const remove = async (id) => {
+  const response = await api.delete(`/api/planos/${id}`);
+  return response.data;
+};
+
+export default { getById, getByPaciente, create, update, remove };

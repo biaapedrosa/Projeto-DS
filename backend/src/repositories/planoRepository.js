@@ -4,7 +4,11 @@ const planoInclude = {
   refeicoes: {
     include: {
       opcoes: {
-        include: { alimentos: true },
+        include: {
+          alimentos: {
+            include: { alimentoTaco: true },
+          },
+        },
       },
     },
   },
@@ -40,7 +44,10 @@ const buildAlimentosCreate = (alimentos) => {
   if (!Array.isArray(alimentos) || alimentos.length === 0) return undefined;
 
   return {
-    create: alimentos.map((alimento) => ({ nome: alimento.nome })),
+    create: alimentos.map((alimento) => ({
+      nome: alimento.nome,
+      alimento_taco_id: alimento.alimento_taco_id ?? null,
+    })),
   };
 };
 

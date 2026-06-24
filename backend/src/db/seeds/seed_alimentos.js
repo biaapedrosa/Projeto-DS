@@ -3,11 +3,8 @@ const path = require('path');
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
-
 const csvPath = path.join(__dirname, 'tabela_taco.csv');
 
-// Faz o parsing de uma linha CSV respeitando campos entre aspas que contêm vírgulas
-// (ex: "Abacaxi, banana e cenoura, suco natural").
 const parseCSVLine = (line) => {
   const values = [];
   let current = '';
@@ -15,7 +12,6 @@ const parseCSVLine = (line) => {
 
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
-
     if (char === '"') {
       inQuotes = !inQuotes;
     } else if (char === ',' && !inQuotes) {
@@ -26,17 +22,15 @@ const parseCSVLine = (line) => {
     }
   }
   values.push(current.trim());
-
   return values;
 };
 
 const parseCSV = (content) => {
-  const lines = content.split('\n').slice(1); // pula o header
+  const lines = content.split('\n').slice(1);
   const alimentos = [];
 
   for (const line of lines) {
     if (!line.trim()) continue;
-
     const cols = parseCSVLine(line);
     if (cols.length < 12) continue;
 
@@ -55,7 +49,6 @@ const parseCSV = (content) => {
       restricoes: parseInt(cols[11], 10) || 0,
     });
   }
-
   return alimentos;
 };
 
@@ -69,11 +62,8 @@ const seed = async () => {
 
     const content = fs.readFileSync(csvPath, 'utf-8');
     const alimentos = parseCSV(content);
-
     console.log(`Inserindo ${alimentos.length} alimentos da tabela TACO...`);
-
     await prisma.alimentoTaco.createMany({ data: alimentos });
-
     console.log('✅ Seed da tabela TACO concluído!');
   } catch (err) {
     console.error('❌ Erro no seed:', err.message);

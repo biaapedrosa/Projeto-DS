@@ -11,21 +11,30 @@ export const AuthProvider = ({ children }) => {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const login = async (dados) => {
-    const data = await authService.login(dados);
-    setUser(data);
+  // Persiste o usuário E o token. O token é lido pelo interceptor do axios
+  // (api.js) para montar o header Authorization em toda chamada autenticada.
+  const persist = (data) => {
+    if (data.token) localStorage.setItem('token', data.token);
     localStorage.setItem('nutriflow:user', JSON.stringify(data));
+    setUser(data);
     return data;
   };
+
+  const login = async (dados) => persist(await authService.login(dados));
+
+  const loginSocial = async (dados) => persist(await authService.socialLogin(dados));
+
+  const ativarConta = async (dados) => persist(await authService.ativarConta(dados));
 
   const logout = () => {
     authService.logout();
     setUser(null);
-    localStorage.removeItem('nutriflow:user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, showLoginModal, setShowLoginModal }}>
+    <AuthContext.Provider
+      value={{ user, login, loginSocial, ativarConta, logout, showLoginModal, setShowLoginModal }}
+    >
       {children}
     </AuthContext.Provider>
   );

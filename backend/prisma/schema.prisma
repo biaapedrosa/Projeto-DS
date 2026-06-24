@@ -127,10 +127,12 @@ model Opcao {
 }
 
 model Alimento {
-  id       Int    @id @default(autoincrement())
-  opcao_id Int    @map("option_id")
-  nome     String @db.VarChar(100)
-  opcao    Opcao  @relation(fields: [opcao_id], references: [id])
+  id               Int           @id @default(autoincrement())
+  opcao_id         Int           @map("option_id")
+  nome             String        @db.VarChar(100)
+  alimento_taco_id Int?
+  opcao            Opcao         @relation(fields: [opcao_id], references: [id])
+  alimentoTaco     AlimentoTaco? @relation(fields: [alimento_taco_id], references: [id], onDelete: SetNull)
 
   @@map("alimento")
 }
@@ -150,8 +152,9 @@ model AlimentoTaco {
   retinol_mcg    Decimal? @db.Decimal(10, 2)
   vitamina_c_mg  Decimal? @db.Decimal(10, 2)
   sodio_mg       Decimal? @db.Decimal(10, 2)
-  restricoes     Int      @default(0)
-  created_at     DateTime @default(now())
+  restricoes     Int        @default(0)
+  created_at     DateTime   @default(now())
+  alimentos      Alimento[]
 
   @@map("alimento_taco")
 }
