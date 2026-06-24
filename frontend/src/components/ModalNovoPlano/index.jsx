@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import planoService from '../../services/planoService';
+import AutocompleteAlimento from '../AutocompleteAlimento';
 
 export default function ModalNovoPlano({ pacienteId, onClose, onSalvo }) {
   const { user } = useAuth();
@@ -39,17 +40,15 @@ export default function ModalNovoPlano({ pacienteId, onClose, onSalvo }) {
   // ALIMENTOS
   const addAlimento = (ri, oi) => {
     const novas = [...refeicoes];
-    novas[ri].opcoes[oi].alimentos.push({ nome: '' });
+    novas[ri].opcoes[oi].alimentos.push({ nome: '', alimento_taco_id: null });
     setRefeicoes(novas);
   };
-  const updateAlimento = (ri, oi, ai, valor) => {
+  const selecionarAlimento = (ri, oi, ai, alimento) => {
     const novas = [...refeicoes];
-    novas[ri].opcoes[oi].alimentos[ai].nome = valor;
-    setRefeicoes(novas);
-  };
-  const removeAlimento = (ri, oi, ai) => {
-    const novas = [...refeicoes];
-    novas[ri].opcoes[oi].alimentos = novas[ri].opcoes[oi].alimentos.filter((_, idx) => idx !== ai);
+    novas[ri].opcoes[oi].alimentos[ai] = {
+      nome: alimento.descricao || '',
+      alimento_taco_id: alimento.id ?? null,
+    };
     setRefeicoes(novas);
   };
 
@@ -160,11 +159,9 @@ export default function ModalNovoPlano({ pacienteId, onClose, onSalvo }) {
                       <button onClick={() => addAlimento(ri, oi)} className={`${btnSecundario} mb-1.5`}>+ Alimento</button>
                       {opcao.alimentos.map((alimento, ai) => (
                         <div key={ai} className="mb-1.5 flex gap-2">
-                          <input
-                            placeholder="Alimento"
+                          <AutocompleteAlimento
                             value={alimento.nome}
-                            onChange={(e) => updateAlimento(ri, oi, ai, e.target.value)}
-                            className={`${inputClass} flex-1`}
+                            onSelect={(sel) => selecionarAlimento(ri, oi, ai, sel)}
                           />
                           <button onClick={() => removeAlimento(ri, oi, ai)} className={btnRemover}>×</button>
                         </div>
