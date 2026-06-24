@@ -79,11 +79,12 @@ export default function AdminDashboard() {
 
   const voltar = () => { setTela(null); setErro(''); setSucesso(''); };
 
-  const botoes = [
+const botoes = [
     { key: 'criar-nutricionista', Icon: UserPlus, titulo: 'Criar Nutricionista', sub: 'Cadastrar novo profissional' },
     { key: 'gerenciar-nutricionistas', Icon: Stethoscope, titulo: 'Gerenciar Nutricionistas', sub: 'Ver e remover profissionais' },
     { key: 'cadastrar-paciente', Icon: Plus, titulo: 'Cadastrar Paciente', sub: 'Registrar novo paciente' },
     { key: 'gerenciar-pacientes', Icon: Users, titulo: 'Gerenciar Pacientes', sub: 'Ver e remover pacientes' },
+    { key: 'meus-pacientes', Icon: Users, titulo: 'Meus Pacientes', sub: 'Prontuários e planos alimentares', rota: '/nutricionista/pacientes' },
   ];
 
   const cardClass = 'rounded-xl bg-white p-8 shadow-[0_2px_12px_rgba(0,0,0,0.06)]';
@@ -111,10 +112,12 @@ export default function AdminDashboard() {
           <>
             <h2 className="mb-6 text-[#1a1a1a]">O que deseja fazer?</h2>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
-              {botoes.map(({ key, Icon, titulo, sub }) => (
+              {botoes.map((b) => {
+                const { key, Icon, titulo, sub } = b;
+                return (
                 <button
                   key={key}
-                  onClick={() => setTela(key)}
+                  onClick={() => b.rota ? navigate(b.rota) : setTela(key)}
                   className="cursor-pointer rounded-xl border border-[#e0e0e0] bg-white p-6 text-left shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(26,58,42,0.12)]"
                 >
                   <div className="mb-2.5 flex h-12 w-12 items-center justify-center rounded-xl bg-nutri-100">
@@ -123,7 +126,8 @@ export default function AdminDashboard() {
                   <div className="text-[15px] font-bold text-[#1a1a1a]">{titulo}</div>
                   <div className="mt-1 text-[13px] text-[#888]">{sub}</div>
                 </button>
-              ))}
+                );
+              })}
             </div>
           </>
         )}
