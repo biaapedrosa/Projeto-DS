@@ -51,6 +51,11 @@ export default function ModalNovoPlano({ pacienteId, onClose, onSalvo }) {
     };
     setRefeicoes(novas);
   };
+  const removeAlimento = (ri, oi, ai) => {
+  const novas = [...refeicoes];
+  novas[ri].opcoes[oi].alimentos = novas[ri].opcoes[oi].alimentos.filter((_, idx) => idx !== ai);
+  setRefeicoes(novas);
+  };
 
   // SALVAR
   const handleSalvar = async () => {
