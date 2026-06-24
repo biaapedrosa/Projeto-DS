@@ -1,6 +1,5 @@
 import { createContext, useState, useContext } from 'react';
 import authService from '../services/authService';
-import { makeDemoToken } from '../services/mockApi';
 
 const AuthContext = createContext();
 
@@ -27,13 +26,6 @@ export const AuthProvider = ({ children }) => {
 
   const ativarConta = async (dados) => persist(await authService.ativarConta(dados));
 
-  // Login de demonstração - substituir quando a integração estiver completa
-  const loginDemo = (tipo = 'paciente') => {
-    const token = makeDemoToken(tipo);
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return persist({ token, ...payload });
-  };
-
   const logout = () => {
     authService.logout();
     setUser(null);
@@ -41,7 +33,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, loginSocial, ativarConta, loginDemo, logout, showLoginModal, setShowLoginModal }}
+      value={{ user, login, loginSocial, ativarConta, logout, showLoginModal, setShowLoginModal }}
     >
       {children}
     </AuthContext.Provider>
