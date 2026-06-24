@@ -27,7 +27,6 @@ vi.mock('../context/AuthContext', () => {
   return {
     useAuth: () => ({
       login: mockLogin,
-      loginDemo: vi.fn(),
       loginSocial: vi.fn(),
       ativarConta: mockAtivarConta
     })
