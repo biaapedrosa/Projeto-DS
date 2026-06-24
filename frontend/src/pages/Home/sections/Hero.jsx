@@ -32,7 +32,7 @@ export default function Hero() {
       </div>
       <div className="relative w-full max-w-[480px] animate-fade-up [animation-delay:160ms]">
         <img
-          src="/tela-inicio.jpg"
+          src={`${import.meta.env.BASE_URL}tela-inicio.jpg`}
           alt="Alimentação saudável"
           className="w-[130%] rounded-[40px] object-cover shadow-[0_12px_24px_rgba(0,0,0,0.1)]"
         />

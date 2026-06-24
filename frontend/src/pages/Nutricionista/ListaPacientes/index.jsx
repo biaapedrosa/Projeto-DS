@@ -35,7 +35,17 @@ export default function ListaPacientes() {
   return (
     <div className="mx-auto max-w-[900px] p-8">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="m-0 text-nutri">Meus Pacientes</h2>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="cursor-pointer rounded-lg border border-[#2d7a4f] bg-white px-4 py-2 text-sm font-semibold text-[#2d7a4f] transition-colors hover:bg-nutri-100"
+          >
+            ← Voltar para painel
+          </button>
+
+          <h2 className="m-0 text-nutri">Meus Pacientes</h2>
+        </div>
+
         <button
           onClick={() => navigate('/nutricionista/dashboard?acao=cadastrar')}
           className="cursor-pointer rounded-lg border-0 bg-nutri px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"

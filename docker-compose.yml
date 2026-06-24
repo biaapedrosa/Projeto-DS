@@ -5,10 +5,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: clinica_nutricao
-    ports:
-      - "5433:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
+    networks:
+      - nutricao-net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -21,19 +21,48 @@ services:
       - "3001:3001"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/clinica_nutricao
-      JWT_SECRET: dev_jwt_secret_troque_em_producao
+      JWT_SECRET: nutricao_jwt_secret_2026
       JWT_EXPIRES_IN: 7d
       PORT: 3001
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - nutricao-net
 
   frontend:
-    build: ./frontend
+    image: node:22-alpine
+    command: sh -c "npm install && npm start"
     ports:
       - "3000:3000"
+    working_dir: /frontend
+    volumes:
+      - ./frontend:/frontend
+      - frontend_node_modules:/frontend/node_modules
+    environment:
+      VITE_BASE: /nutricao/
+      VITE_API_PROXY: http://backend:3001
     depends_on:
       - backend
+    networks:
+      - nutricao-net
+
+  nginx:
+    build: ./nginx
+    container_name: nutricao-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - nutricao-net
+    restart: always
+
+networks:
+  nutricao-net:
+    driver: bridge
 
 volumes:
   pg_data:
+  frontend_node_modules:
