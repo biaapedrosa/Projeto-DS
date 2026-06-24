@@ -1,9 +1,13 @@
 const prisma = require('../db');
 
-// Campos seguros para exposição (sem hash de senha).
 const safeSelect = {
-  id: true, nome: true, email: true, telefone: true,
-  crn: true, role: true, created_at: true,
+  id: true,
+  nome: true,
+  email: true,
+  telefone: true,
+  crn: true,
+  role: true,
+  created_at: true,
 };
 
 const findByEmail = (email) =>
@@ -19,7 +23,10 @@ const create = ({ crn, role, ...resto }) =>
   });
 
 const findAll = () =>
-  prisma.nutricionista.findMany({ orderBy: { id: 'asc' }, select: safeSelect });
+  prisma.nutricionista.findMany({
+    orderBy: { id: 'asc' },
+    select: safeSelect,
+  });
 
 const update = (id, dados) =>
   prisma.nutricionista.update({
@@ -28,10 +35,14 @@ const update = (id, dados) =>
     select: safeSelect,
   });
 
-const update = (id, dados) =>
-  prisma.nutricionista.update({ where: { id: Number(id) }, data: dados });
-
 const remove = (id) =>
   prisma.nutricionista.delete({ where: { id: Number(id) } });
 
-module.exports = { findByEmail, findById, create, findAll, update, remove };
+module.exports = {
+  findByEmail,
+  findById,
+  create,
+  findAll,
+  update,
+  remove,
+};
