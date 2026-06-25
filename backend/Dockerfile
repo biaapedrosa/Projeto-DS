@@ -9,4 +9,4 @@ RUN npx prisma generate
 EXPOSE 3001
 # Sincroniza o schema com o banco, cria o admin inicial (idempotente) e sobe a API.
 # O docker-compose só inicia este serviço quando o Postgres está healthy.
-CMD ["sh", "-c", "npx prisma db push --skip-generate && node prisma/seed.js && node src/server.js"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate --accept-data-loss && node prisma/seed.js && node src/server.js"]
