@@ -43,7 +43,7 @@ function DashboardRedirect() {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           {/* Login sem NavBar e Footer */}
           <Route path="/login" element={<Login />} />

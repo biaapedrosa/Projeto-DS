@@ -72,8 +72,12 @@ model Nutricionista {
 model Paciente {
   id                Int             @id @default(autoincrement())
   nome              String          @db.VarChar(255)
+  cpf               String?         @unique @db.VarChar(11)
   email             String?         @unique @db.VarChar(255)
-  senha             String          @db.VarChar(255)
+  senha             String?         @db.VarChar(255)
+  cartao_sus        String?         @db.VarChar(20)
+  conta_ativada     Boolean         @default(false)
+  tipo_paciente     String?         @db.VarChar(50)
   sexo              Sexo?
   data_nascimento   DateTime?       @db.Date
   idade             Int?
