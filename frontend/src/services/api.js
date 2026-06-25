@@ -25,7 +25,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('nutriflow:user');
-      window.location.href = '/login';
+      window.location.href = '/nutricao/login';
     }
     return Promise.reject(error);
   }
