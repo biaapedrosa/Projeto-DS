@@ -1,19 +1,8 @@
 import api from './api';
 
 // Decodifica o payload do JWT e monta o objeto de usuário usado no app.
-// Importante: o payload é base64url e vem em UTF-8. Usar apenas atob() quebra
-// caracteres acentuados (ex.: "João" → "JoÃ£o"), pois atob devolve uma binary
-// string em Latin-1. Convertendo byte a byte para %XX e usando decodeURIComponent
-// interpretamos os bytes corretamente como UTF-8.
-const decodeBase64Url = (b64url) => {
-  const b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
-  const bin = atob(b64);
-  const escaped = Array.from(bin, (c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join('');
-  return decodeURIComponent(escaped);
-};
-
 const decode = (token) => {
-  const payload = JSON.parse(decodeBase64Url(token.split('.')[1]));
+  const payload = JSON.parse(atob(token.split('.')[1]));
   return {
     token,
     id: payload.id,
