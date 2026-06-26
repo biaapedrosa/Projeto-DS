@@ -158,3 +158,7 @@ npm start
 ```
 
 O front-end estará disponível em `http://localhost:3000` e a API em `http://localhost:3001`.
+
+### Vídeo do nosso site funcionando 
+
+https://youtu.be/ITWD66jwqIM?is=K1gsVDCnT8w6ply4
