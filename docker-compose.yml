@@ -2,6 +2,7 @@ services:
 
   backend:
     build: ./backend
+    container_name: projeto-6-backend
     ports:
       - "3006:3001"
     environment:
@@ -15,9 +16,9 @@ services:
   frontend:
     build:
       context: ./frontend
-    container_name: projeto-2-frontend
+    container_name: projeto-6-frontend
     volumes:
-      - /opt/docker/frontends/projeto2:/output
+      - /opt/docker/frontends/projeto6:/output
     depends_on:
       - backend
     restart: "no"
