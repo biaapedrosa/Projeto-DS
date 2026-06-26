@@ -1,68 +1,36 @@
 services:
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: clinica_nutricao
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-    networks:
-      - nutricao-net
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   backend:
     build: ./backend
     ports:
-      - "3001:3001"
+      - "3006:3001"
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/clinica_nutricao
+      DATABASE_URL: postgresql://projeto6_user:senha_projeto6@cin-postgres:5432/projeto6_db
       JWT_SECRET: nutricao_jwt_secret_2026
       JWT_EXPIRES_IN: 7d
-      PORT: 3001
+      PORT: 3006
     depends_on:
       db:
         condition: service_healthy
     networks:
-      - nutricao-net
+      - cin_proxy
 
   frontend:
-    image: node:22-alpine
-    command: sh -c "npm install && npm start"
-    ports:
-      - "3000:3000"
-    working_dir: /frontend
+    build:
+      context: ./frontend
+    container_name: projeto-2-frontend
     volumes:
-      - ./frontend:/frontend
-      - frontend_node_modules:/frontend/node_modules
+      - /opt/docker/frontends/projeto2:/output
+    depends_on:
+      - backend
+    restart: "no"
     environment:
       VITE_BASE: /nutricao/
       VITE_API_PROXY: http://backend:3001
-    depends_on:
-      - backend
+      VITE_API_URL: http://vm-clindig.cin.ufpe.br/nutricao
     networks:
-      - nutricao-net
-
-  nginx:
-    build: ./nginx
-    container_name: nutricao-nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - nutricao-net
-    restart: always
+      - cin_proxy
 
 networks:
-  nutricao-net:
-    driver: bridge
-
-volumes:
-  pg_data:
-  frontend_node_modules:
+  cin_proxy:
+    external: true

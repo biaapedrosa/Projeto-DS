@@ -13,7 +13,13 @@ const alimentoTacoRoutes = require('./routes/alimentoTacoRoutes');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://vm-clindig.cin.ufpe.br', // vm
+    'https://clinicasdigitais.cin.ufpe.br', // prod
+    'http://localhost:3000', // dev
+  ],
+}));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
