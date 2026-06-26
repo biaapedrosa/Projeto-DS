@@ -9,7 +9,7 @@ services:
       DATABASE_URL: postgresql://projeto6_user:senha_projeto6@cin-postgres:5432/projeto6_db
       JWT_SECRET: nutricao_jwt_secret_2026
       JWT_EXPIRES_IN: 7d
-      PORT: 3006
+      PORT: 3001
     networks:
       - cin_proxy
 
