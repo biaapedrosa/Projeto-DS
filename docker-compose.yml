@@ -16,16 +16,15 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        VITE_BASE: /nutricao/
+        VITE_API_URL: http://vm-clindig.cin.ufpe.br/nutricao
     container_name: projeto-6-frontend
     volumes:
       - /opt/docker/frontends/projeto6:/output
     depends_on:
       - backend
     restart: "no"
-    environment:
-      VITE_BASE: /nutricao/
-      VITE_API_PROXY: http://backend:3001
-      VITE_API_URL: http://vm-clindig.cin.ufpe.br/nutricao
     networks:
       - cin_proxy
 
